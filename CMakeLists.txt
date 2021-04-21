@@ -49,25 +49,19 @@ get_filename_component(APP_PATH "${CMAKE_CURRENT_SOURCE_DIR}/" ABSOLUTE)
 
 include("${CINDER_PATH}/proj/cmake/modules/cinderMakeApp.cmake")
 
-list(APPEND SOURCE_FILES    src/gas_container.cc
-        src/cinder_app.cc
-                            src/particle.cpp
-                            src/histogram_container.cpp
-                            src/histogram_bar.cpp)
+list(APPEND SOURCE_FILES src/pacman_app.cc)
 
-list(APPEND TEST_FILES tests/gas_container_test_file.cc
-                       tests/histogram_container_test_file.cpp
-                       tests/particle_test_file.cpp)
+#list(APPEND TEST_FILES )
 
 ci_make_app(
-        APP_NAME        gas-simulation
+        APP_NAME        pacman
         CINDER_PATH     ${CINDER_PATH}
-        SOURCES         apps/cinder_app_main.cc ${SOURCE_FILES}
+        SOURCES apps/pacman_app_main.cc ${SOURCE_FILES}
         INCLUDES        include
 )
 
 ci_make_app(
-        APP_NAME        gas-simulation-test
+        APP_NAME        pacman-test
         CINDER_PATH     ${CINDER_PATH}
         SOURCES         tests/test_main.cc ${SOURCE_FILES} ${TEST_FILES}
         INCLUDES        include
@@ -75,5 +69,5 @@ ci_make_app(
 )
 
 if(MSVC)
-    set_property(TARGET gas-simulation-test APPEND_STRING PROPERTY LINK_FLAGS " /SUBSYSTEM:CONSOLE")
+    set_property(TARGET pacman-test APPEND_STRING PROPERTY LINK_FLAGS " /SUBSYSTEM:CONSOLE")
 endif()
