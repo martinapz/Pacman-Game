@@ -2,8 +2,9 @@
 
 using finalproject::PacmanApp;
 
+
 void prepareSettings(PacmanApp::Settings* settings) {
-  settings->setTitle( "Ideal Gas Simulation" );
+  settings->setTitle( "PacMan" );
   settings->setWindowSize( 1200, 900);
   settings->setFrameRate (60);
   settings->setResizable(false);

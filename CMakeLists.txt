@@ -49,7 +49,8 @@ get_filename_component(APP_PATH "${CMAKE_CURRENT_SOURCE_DIR}/" ABSOLUTE)
 
 include("${CINDER_PATH}/proj/cmake/modules/cinderMakeApp.cmake")
 
-list(APPEND SOURCE_FILES src/pacman_app.cc)
+list(APPEND SOURCE_FILES src/pacman_app.cc
+        src/visualizer/sketchpad.cc)
 
 #list(APPEND TEST_FILES )
 
