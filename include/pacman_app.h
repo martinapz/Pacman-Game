@@ -13,17 +13,34 @@ using namespace finalproject::elements;
 
 namespace finalproject {
 
+    /**
+     * App for visualizing the Pacman game
+     */
     class PacmanApp : public ci::app::App {
     public:
-
+        /**
+        * Default constructor
+        */
         PacmanApp();
 
+        /**
+        * Set up the Pacman game
+        */
         void setup() override;
 
+        /**
+        * Draws the Pacman game
+        */
         void draw() override;
 
+        /**
+        * Updates the game
+        */
         void update() override;
 
+        /**
+        * Updates direction based on user input
+        */
         void keyDown(cinder::app::KeyEvent event) override;
 
     private:
