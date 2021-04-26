@@ -11,8 +11,14 @@ namespace elements {
     */
     class Empty : public StaticElement {
     public:
+        /**
+        * Default constructor for Empty object
+        */
         Empty() = default;
 
+        /**
+        * Draws the Empty element
+        */
         void draw(size_t row, size_t col) const;
     private:
         ci::Color color_ = ci::Color("black");

@@ -10,41 +10,49 @@ namespace finalproject {
 
 namespace visualizer {
 
-/**
- * TODO write comment
- */
-class Sketchpad {
- public:
+    /**
+     * This class represents the Sketchpad, which is where the pacman game is drawn and played on.
+     */
+    class Sketchpad {
+    public:
+        /**
+        * Default constructor for Sketchpad
+        */
+        Sketchpad() = default;
 
-  Sketchpad() = default;
+        /**
+        * Constructor
+        */
+        Sketchpad(const glm::vec2& top_left_corner, size_t num_pixels_per_side,
+                    double sketchpad_size, double brush_radius = 1.15);
 
-  Sketchpad(const glm::vec2& top_left_corner, size_t num_pixels_per_side,
-            double sketchpad_size, double brush_radius = 1.15);
+        /**
+        * Draws the Sketchpad
+        */
+        void draw() const;
 
+        void Clear();
 
-  void draw() const;
+        /**
+        * Sets the vector of static elements
+        */
+        void SetStaticElements(std::vector<std::vector<std::shared_ptr<StaticElement>>> static_elements);
 
-  void HandleBrush(const glm::vec2& brush_screen_coords);
+        /**
+        * Gets the vector of static elements
+        */
+        std::vector<std::vector<std::shared_ptr<StaticElement>>>& GetStaticElements();
 
+    private:
+        glm::vec2 top_left_corner_;
 
-  void Clear();
+        size_t num_pixels_per_side_;
 
-  void SetStaticElements(std::vector<std::vector<std::shared_ptr<StaticElement>>> static_elements);
+        // Number of screen pixels in the width/height of one sketchpad pixel
+        double pixel_side_length_;
 
-  std::vector<std::vector<std::shared_ptr<StaticElement>>> GetStaticElements();
-
- private:
-  glm::vec2 top_left_corner_;
-
-  size_t num_pixels_per_side_;
-
-  /** Number of screen pixels in the width/height of one sketchpad pixel */
-  double pixel_side_length_;
-
-  double brush_radius_;
-
-  std::vector<std::vector<std::shared_ptr<StaticElement>>> static_elements_;
-};
+        std::vector<std::vector<std::shared_ptr<StaticElement>>> static_elements_;
+    };
 
 }  // namespace visualizer
 

@@ -18,6 +18,9 @@ namespace elements {
         */
         Ghost(size_t i, size_t j);
 
+        /**
+        * Draws the Ghost object
+        */
         void draw() const;
 
      private:

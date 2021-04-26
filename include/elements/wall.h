@@ -11,8 +11,14 @@ namespace elements {
     */
     class Wall : public StaticElement {
     public:
+        /**
+        * Default constructor for Wall
+        */
         Wall() = default;
 
+        /**
+        * Draws the Wall object
+        */
         void draw(size_t row, size_t col) const;
 
     private:

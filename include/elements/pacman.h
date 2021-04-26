@@ -24,6 +24,9 @@ namespace elements {
         */
         Pacman(size_t i, size_t j);
 
+        /**
+        * Draws Pacman object
+        */
         void draw() const;
 
     private:

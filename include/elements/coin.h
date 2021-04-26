@@ -7,12 +7,18 @@ namespace finalproject {
 
 namespace elements {
     /**
-    * Class that represents the Dot object in the Pacman game.
+    * Class that represents the Coin object in the Pacman game.
     */
-    class Dot : public StaticElement {
+    class Coin : public StaticElement {
     public:
-        Dot() = default;
+        /**
+        * Default constructor for coin
+        */
+        Coin() = default;
 
+        /**
+        * Draws the Coin object on the sketchpad
+        */
         void draw(size_t row, size_t col) const;
     private:
         ci::Color color_ = ci::Color("yellow");

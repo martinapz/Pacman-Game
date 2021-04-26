@@ -6,11 +6,19 @@
 namespace finalproject {
 
 namespace elements {
-
+    /**
+    * Class that represents the Door object in the Pacman game.
+    */
     class Door : public StaticElement {
     public:
+        /**
+        * Default constructor for Door object
+        */
         Door() = default;
 
+        /**
+        * Draws the Door on the sketchpad
+        */
         void draw(size_t row, size_t col) const;
 
     private:

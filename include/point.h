@@ -18,12 +18,24 @@ namespace finalproject {
         */
         Point(size_t x_coordinate, size_t y_coordinate);
 
+        /**
+        * Get x coordinate
+        */
         size_t getX() const;
 
+        /**
+        * Get y coordinate
+        */
         size_t getY() const;
 
+        /**
+        * Set x coordinate
+        */
         void setX(size_t x);
 
+        /**
+        * Set y coordinate
+        */
         void setY(size_t y);
 
     private:
