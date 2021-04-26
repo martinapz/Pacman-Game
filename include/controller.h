@@ -22,8 +22,8 @@ namespace finalproject {
             Configuration::WINDOW_MARGIN), Configuration::GRID_SIZE, Configuration::SKETCHPAD_SIZE - 2 * Configuration::WINDOW_MARGIN, 0);
         vector<Ghost> ghosts_ = vector<Ghost>();
         Pacman pacman_;
-        size_t score_;
-        //visualizer::Features features_;
+        size_t score_ = 0;
+        visualizer::Features features_;
 
     };
 

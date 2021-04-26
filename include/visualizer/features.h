@@ -1,6 +1,7 @@
 #ifndef FINAL_PROJECT_FEATURES_H
 #define FINAL_PROJECT_FEATURES_H
 
+#include <controller.h>
 
 namespace finalproject {
 
@@ -10,11 +11,18 @@ namespace visualizer {
         */
         class Features {
         public:
-          //  void draw() const;
+           /**
+            * Draws the features of the Game
+            */
+            void draw() const;
+
         private:
-          void Features::drawLabels();
+            void drawContainer() const;
+
+            void drawLabels() const;
         };
 
-}
-}
+} // namespace visualizer
+} // namespace finalproject
+
 #endif //FINAL_PROJECT_FEATURES_H

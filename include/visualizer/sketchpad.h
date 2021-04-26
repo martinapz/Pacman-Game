@@ -31,8 +31,6 @@ namespace visualizer {
         */
         void draw() const;
 
-        void Clear();
-
         /**
         * Sets the vector of static elements
         */
