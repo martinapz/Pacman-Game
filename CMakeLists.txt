@@ -53,6 +53,7 @@ list(APPEND SOURCE_FILES src/pacman_app.cc
         src/point.cc
         src/controller.cc
         src/visualizer/sketchpad.cc
+        src/visualizer/features.cc
         src/elements/ghost.cc
         src/elements/pacman.cc
         src/elements/immunity.cc
