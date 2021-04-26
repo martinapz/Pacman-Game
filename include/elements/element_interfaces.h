@@ -14,7 +14,7 @@ namespace elements {
     public:
         void drawSquare(size_t row, size_t col, ci::Color color) const {
             ci::gl::color(color);
-            glm::vec2 pixel_top_left = top_left_corner_ + vec2(col * pixel_side_length_, row * pixel_side_length_);
+            glm::vec2 pixel_top_left = top_left_corner_ + vec2(row * pixel_side_length_, col * pixel_side_length_);
             glm::vec2 pixel_bottom_right = pixel_top_left + vec2(pixel_side_length_, pixel_side_length_);
             ci::Rectf pixel_bounding_box(pixel_top_left, pixel_bottom_right);
             ci::gl::drawSolidRect(pixel_bounding_box);
@@ -22,7 +22,7 @@ namespace elements {
 
         void drawCircle(size_t row, size_t col, ci::Color color, float radius) const {
             ci::gl::color(color);
-            glm::vec2 pixel_top_left = top_left_corner_ + vec2(col * pixel_side_length_, row * pixel_side_length_);
+            glm::vec2 pixel_top_left = top_left_corner_ + vec2(row * pixel_side_length_, col * pixel_side_length_);
             glm::vec2 pixel_bottom_right = pixel_top_left + vec2(pixel_side_length_, pixel_side_length_);
             glm::vec2 center = midPoint(pixel_top_left, pixel_bottom_right);
             ci::gl::drawSolidCircle(center, radius);

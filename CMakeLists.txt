@@ -55,8 +55,8 @@ list(APPEND SOURCE_FILES src/pacman_app.cc
         src/visualizer/sketchpad.cc
         src/elements/ghost.cc
         src/elements/pacman.cc
+        src/elements/immunity.cc
         src/elements/coin.cc
-        src/elements/dot.cc
         src/elements/wall.cc
         src/elements/empty.cc
         src/elements/door.cc)

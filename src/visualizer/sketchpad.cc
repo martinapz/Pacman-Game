@@ -1,4 +1,5 @@
 #include <visualizer/sketchpad.h>
+#include <string>
 
 namespace finalproject {
 
@@ -13,44 +14,14 @@ Sketchpad::Sketchpad(const vec2& top_left_corner, size_t num_pixels_per_side,
       pixel_side_length_(sketchpad_size / num_pixels_per_side),
       brush_radius_(brush_radius) {}
 
-void Sketchpad::Draw() const {
-  for (size_t row = 0; row < num_pixels_per_side_; ++row) {
-    for (size_t col = 0; col < num_pixels_per_side_; ++col) {
-      switch (elements_[row][col]) {
-            case WALL:
-                DrawSquare(row, col, ci::Color("blue"));
-                break;
-            case PACMAN:
-                DrawSquare(row, col, ci::Color("yellow"));
-                break;
-            case DOT:
-                DrawSquare(row, col, ci::Color("white"));
-                break;
-            case COIN:
-                DrawSquare(row, col, ci::Color("white"));
-                break;
-            case GHOST:
-                DrawSquare(row, col, ci::Color("red"));
-                break;
-            case DOOR:
-                DrawSquare(row, col, ci::Color("white"));
-                break;
-            default: // EMPTY
-                DrawSquare(row, col, ci::Color("black"));
-                break;
-      }
-      //ci::gl::color(ci::Color("black"));
-      //ci::gl::drawStrokedRect(pixel_bounding_box);
+void Sketchpad::draw() const {
+    for (size_t row = 0; row < num_pixels_per_side_; ++row) {
+        for (size_t col = 0; col < num_pixels_per_side_; ++col) {
+            //Since this is a vector of pointers, you call the draw function on the element that the pointer
+            //is pointing to.
+            static_elements_[row][col] -> draw(row, col);
+        }
     }
-  }
-}
-
-void Sketchpad::DrawSquare(size_t row, size_t col, ci::Color color) const {
-    ci::gl::color(color);
-    vec2 pixel_top_left = top_left_corner_ + vec2(col * pixel_side_length_,row * pixel_side_length_);
-    vec2 pixel_bottom_right = pixel_top_left + vec2(pixel_side_length_, pixel_side_length_);
-    ci::Rectf pixel_bounding_box(pixel_top_left, pixel_bottom_right);
-    ci::gl::drawSolidRect(pixel_bounding_box);
 }
 
 void Sketchpad::HandleBrush(const vec2& brush_screen_coords) {
@@ -73,8 +44,12 @@ void Sketchpad::Clear() {
   // TODO: implement this method
 }
 
-void Sketchpad::SetElements(std::vector<std::vector<ELEMENT>> elements) {
-    elements_ = elements;
+std::vector<std::vector<std::shared_ptr<StaticElement>>> Sketchpad::GetStaticElements() {
+    return static_elements_;
+}
+
+void Sketchpad::SetStaticElements(std::vector<std::vector<std::shared_ptr<StaticElement>>> elements) {
+    static_elements_ = elements;
 }
 
 }  // namespace visualizer

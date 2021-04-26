@@ -2,58 +2,36 @@
 
 #include <types.h>
 #include "cinder/gl/gl.h"
+#include "elements/element_interfaces.h"
+
+using namespace finalproject::elements;
 
 namespace finalproject {
 
 namespace visualizer {
 
 /**
- * A sketchpad which will be displayed in the Cinder application and respond to
- * mouse events. Furthermore, the sketchpad can output its current state in the
- * same format as the Naive Bayes image data files.
+ * TODO write comment
  */
 class Sketchpad {
  public:
 
   Sketchpad() = default;
 
-  /**
-   * Creates a sketchpad.
-   * (Note that sketchpad pixels are larger than screen pixels.)
-   *
-   * @param top_left_corner     the screen coordinates of the top left corner of
-   *                            the sketchpad
-   * @param num_pixels_per_side the number of sketchpad pixels in one row/column
-   *                            of the sketchpad
-   * @param sketchpad_size      the side length of the sketchpad, measured in
-   *                            screen pixels
-   * @param brush_radius        the maximum distance (measured in sketchpad
-   *                            pixels) from the brush that will be shaded
-   */
   Sketchpad(const glm::vec2& top_left_corner, size_t num_pixels_per_side,
             double sketchpad_size, double brush_radius = 1.15);
 
-  /**
-   * Displays the current state of the sketchpad in the Cinder application.
-   */
-  void Draw() const;
 
-  /**
-   * Shades in the sketchpad pixels whose centers are within brush_radius units
-   * of the brush's location. (One unit is equal to the length of one sketchpad
-   * pixel.)
-   *
-   * @param brush_screen_coords the screen coordinates at which the brush is
-   *           located
-   */
+  void draw() const;
+
   void HandleBrush(const glm::vec2& brush_screen_coords);
 
-  /**
-   * Set all of the sketchpad pixels to an unshaded state.
-   */
+
   void Clear();
 
-  void SetElements(std::vector<std::vector<ELEMENT>> elements);
+  void SetStaticElements(std::vector<std::vector<std::shared_ptr<StaticElement>>> static_elements);
+
+  std::vector<std::vector<std::shared_ptr<StaticElement>>> GetStaticElements();
 
  private:
   glm::vec2 top_left_corner_;
@@ -65,10 +43,7 @@ class Sketchpad {
 
   double brush_radius_;
 
-  std::vector<std::vector<ELEMENT>> elements_;
-
-  void DrawSquare(size_t row, size_t col, ci::Color color) const;
-
+  std::vector<std::vector<std::shared_ptr<StaticElement>>> static_elements_;
 };
 
 }  // namespace visualizer

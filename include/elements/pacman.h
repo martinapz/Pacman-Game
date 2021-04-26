@@ -26,8 +26,6 @@ namespace elements {
 
         void draw() const;
 
-        void move();
-
     private:
         float radius_ = 10;
         ci::Color color_ = ci::Color("yellow");
