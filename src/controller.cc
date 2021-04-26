@@ -12,12 +12,12 @@ namespace finalproject {
 
     void Controller::setUpGame() {
         shared_ptr<Wall> wall(new Wall());
-        shared_ptr<Dot> dot(new Dot());
+        shared_ptr<Immunity> immunity(new Immunity());
         shared_ptr<Coin> coin(new Coin());
         shared_ptr<Door> door(new Door());
-        ifstream in(config_.LEVEL_DATA_FILE);
         vector<vector<std::shared_ptr<StaticElement>>> static_elements = vector<vector<std::shared_ptr<StaticElement>>>(
                 Configuration::GRID_SIZE, vector<std::shared_ptr<StaticElement>>(Configuration::GRID_SIZE));
+        ifstream in(config_.LEVEL_DATA_FILE);
         if (!in.fail()) {
             unsigned i = 0;
             for (std::string line; getline(in, line);) {
@@ -38,10 +38,10 @@ namespace finalproject {
                             static_elements[j][i] = wall;
                             break;
                         case '-':
-                            static_elements[j][i] = dot;
+                            static_elements[j][i] = coin;
                             break;
                         case 'C':
-                            static_elements[j][i] = coin;
+                            static_elements[j][i] = immunity;
                             break;
                         default:
                             static_elements[j][i] = empty_;
@@ -60,6 +60,12 @@ namespace finalproject {
         cinder::gl::clear();
         game_.sketchpad_.draw();
         game_.pacman_.draw();
+        game_.features_.draw();
+
+        string string = "SCORE: " + to_string(game_.score_);
+        ci::gl::drawString(string , vec2(1050, 70), "white",ci::Font("", 30));
+
+
         for (vector<Ghost>::iterator ghost = game_.ghosts_.begin(); ghost != game_.ghosts_.end(); ++ghost) {
             ghost->draw();
         }
@@ -79,6 +85,10 @@ namespace finalproject {
         shared_ptr<StaticElement> element = game_.sketchpad_.GetStaticElements()[newPoint.getX()][newPoint.getY()];
         if (!dynamic_pointer_cast<Wall>(element)) { //If new point is not wall, change position
             game_.pacman_.setPosition(newPoint.getX(), newPoint.getY());
+            if (dynamic_pointer_cast<Coin>(element)) {  //If new point is a coin, increment score and set element to empty
+                game_.sketchpad_.GetStaticElements()[newPoint.getX()][newPoint.getY()] = empty_;
+                game_.score_ += 10;
+            }
         }
 
         /*
@@ -119,7 +129,6 @@ namespace finalproject {
 
 
     void Controller::processAction(Action action) {
-
 
     }
 

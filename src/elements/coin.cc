@@ -4,7 +4,7 @@ namespace finalproject {
 
 namespace elements {
 
-    void Dot::draw(size_t row, size_t col) const {
+    void Coin::draw(size_t row, size_t col) const {
         drawCircle(row, col, color_, radius_);
     }
 
