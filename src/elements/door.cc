@@ -8,5 +8,9 @@ namespace elements {
         drawSquare(row, col, color_);
     }
 
+    void Door::setIsOpen(bool isOpen) {
+        isOpen_ = isOpen;
+    }
+
 } //namespace elements
 } //namespace finalproject

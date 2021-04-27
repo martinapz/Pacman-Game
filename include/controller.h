@@ -3,12 +3,13 @@
 #ifndef FINAL_PROJECT_CONTROLLER_H
 #define FINAL_PROJECT_CONTROLLER_H
 
-#include "types.h"
+#include "game_instructions.h"
 #include "visualizer/sketchpad.h"
 #include "visualizer/features.h"
 #include "elements/ghost.h"
 #include "elements/pacman.h"
 #include <elements/empty.h>
+#include <elements/door.h>
 
 using namespace std;
 
@@ -24,7 +25,7 @@ namespace finalproject {
         Pacman pacman_;
         size_t score_ = 0;
         visualizer::Features features_;
-
+        Status game_status = Status::NOT_STARTED;
     };
 
     /**
@@ -70,6 +71,9 @@ namespace finalproject {
         Configuration config_;
         Game game_;
         std::shared_ptr<Empty> empty_ = shared_ptr<Empty>(new Empty());
+        std::shared_ptr<Door> door_ = shared_ptr<Door>(new Door());
+        long game_elapsed_time_;
+        size_t increment_score = 10;
     };
 
 }

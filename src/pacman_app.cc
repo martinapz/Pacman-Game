@@ -1,6 +1,6 @@
 #include <elements/coin.h>
 #include "pacman_app.h"
-#include "types.h"
+#include "game_instructions.h"
 
 using namespace finalproject::elements;
 

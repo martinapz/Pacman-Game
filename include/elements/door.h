@@ -21,7 +21,10 @@ namespace elements {
         */
         void draw(size_t row, size_t col) const;
 
+        void setIsOpen(bool isOpen);
+
     private:
+        bool isOpen_ = false;
         ci::Color color_ = ci::Color("lightskyblue");
     };
 

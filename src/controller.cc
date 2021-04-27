@@ -1,10 +1,11 @@
 #include "controller.h"
-#include "types.h"
+#include "game_instructions.h"
 #include <elements/wall.h>
 #include <elements/coin.h>
 #include <elements/immunity.h>
 #include <elements/door.h>
 #include <cmath>
+#include <chrono>
 
 using namespace std;
 
@@ -14,7 +15,6 @@ namespace finalproject {
         shared_ptr<Wall> wall(new Wall());
         shared_ptr<Immunity> immunity(new Immunity());
         shared_ptr<Coin> coin(new Coin());
-        shared_ptr<Door> door(new Door());
         vector<vector<std::shared_ptr<StaticElement>>> static_elements = vector<vector<std::shared_ptr<StaticElement>>>(
                 Configuration::GRID_SIZE, vector<std::shared_ptr<StaticElement>>(Configuration::GRID_SIZE));
         ifstream in(config_.LEVEL_DATA_FILE);
@@ -32,7 +32,7 @@ namespace finalproject {
                             game_.ghosts_.push_back(Ghost(j, i));
                             break;
                         case 'T':
-                            static_elements[j][i] = door;
+                            static_elements[j][i] = door_;
                             break;
                         case '#':
                             static_elements[j][i] = wall;
@@ -72,22 +72,22 @@ namespace finalproject {
     }
 
     void Controller::update() {
-        /*
         // Update ghosts position to move to position closest to pacman
         for (Ghost ghost : game_.ghosts_) {
             calculateNewGhostPosition(ghost);
         }
-        */
 
         //Determine next pacman position
         Point newPoint = determineNewPoint(game_.pacman_.getDirection());
         //Check is new point is a wall
         shared_ptr<StaticElement> element = game_.sketchpad_.GetStaticElements()[newPoint.getX()][newPoint.getY()];
-        if (!dynamic_pointer_cast<Wall>(element)) { //If new point is not wall, change position
-            game_.pacman_.setPosition(newPoint.getX(), newPoint.getY());
-            if (dynamic_pointer_cast<Coin>(element)) {  //If new point is a coin, increment score and set element to empty
-                game_.sketchpad_.GetStaticElements()[newPoint.getX()][newPoint.getY()] = empty_;
-                game_.score_ += 10;
+        if (game_.game_status == Status::ACTIVE) {
+            if (!dynamic_pointer_cast<Wall>(element)) { //If new point is not wall, change position
+                game_.pacman_.setPosition(newPoint.getX(), newPoint.getY());
+                if (dynamic_pointer_cast<Coin>(element)) {  //If new point is a coin, increment score and set element to empty
+                    game_.sketchpad_.GetStaticElements()[newPoint.getX()][newPoint.getY()] = empty_;
+                    game_.score_ += increment_score;
+                }
             }
         }
 
@@ -115,8 +115,6 @@ namespace finalproject {
          */
     }
 
-
-
     void Controller::processMove(Direction direction) {
         // Get the destination based on the user's selected direction
         Point newPoint = determineNewPoint(direction);
@@ -127,9 +125,20 @@ namespace finalproject {
         }
     }
 
-
     void Controller::processAction(Action action) {
-
+        switch(action) {
+            case Action::START :
+                game_.game_status = Status::ACTIVE;
+                break;
+            case Action::PAUSE :
+                game_.game_status = Status::PAUSED;
+                break;
+            case Action::EXIT :
+                game_.game_status = Status::OVER;
+                break;
+            default :
+                break;
+        }
     }
 
     Point Controller::determineNewPoint(Direction direction) {

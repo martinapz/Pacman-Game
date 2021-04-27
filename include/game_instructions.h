@@ -1,5 +1,5 @@
-#ifndef FINAL_PROJECT_TYPES_H
-#define FINAL_PROJECT_TYPES_H
+#ifndef FINAL_PROJECT_GAME_INSTRUCTIONS_H
+#define FINAL_PROJECT_GAME_INSTRUCTIONS_H
 
 #include <string>
 
@@ -34,6 +34,16 @@ namespace finalproject {
         DOWN,
         NONE
     };
+
+    /**
+     * Enum to represent the status of the game
+     */
+    enum Status {
+         NOT_STARTED,
+         ACTIVE,
+         PAUSED,
+         OVER,
+    };
 }
 
-#endif //FINAL_PROJECT_TYPES_H
+#endif //FINAL_PROJECT_GAME_INSTRUCTIONS_H

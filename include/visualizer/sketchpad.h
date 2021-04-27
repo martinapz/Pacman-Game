@@ -1,6 +1,6 @@
 #pragma once
 
-#include <types.h>
+#include <game_instructions.h>
 #include "cinder/gl/gl.h"
 #include "elements/element_interfaces.h"
 
@@ -46,7 +46,6 @@ namespace visualizer {
 
         size_t num_pixels_per_side_;
 
-        // Number of screen pixels in the width/height of one sketchpad pixel
         double pixel_side_length_;
 
         std::vector<std::vector<std::shared_ptr<StaticElement>>> static_elements_;

@@ -1,7 +1,7 @@
 #ifndef FINAL_PROJECT_ELEMENT_INTERFACES_H
 #define FINAL_PROJECT_ELEMENT_INTERFACES_H
 
-#include "types.h"
+#include "game_instructions.h"
 #include "point.h"
 #include "cinder/gl/gl.h"
 
