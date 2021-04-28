@@ -72,7 +72,7 @@ namespace finalproject {
         Game game_;
         std::shared_ptr<Empty> empty_ = shared_ptr<Empty>(new Empty());
         std::shared_ptr<Door> door_ = shared_ptr<Door>(new Door());
-        long game_elapsed_time_;
+        std::chrono::steady_clock::time_point game_elapsed_time_;
         size_t increment_score = 10;
     };
 

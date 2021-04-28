@@ -72,6 +72,9 @@ namespace finalproject {
     }
 
     void Controller::update() {
+
+        chrono::steady_clock::time_point start = chrono::steady_clock::now();
+
         // Update ghosts position to move to position closest to pacman
         for (Ghost ghost : game_.ghosts_) {
             calculateNewGhostPosition(ghost);
@@ -90,6 +93,7 @@ namespace finalproject {
                 }
             }
         }
+
 
         /*
         // If pacman is on same position as ghost then game over
