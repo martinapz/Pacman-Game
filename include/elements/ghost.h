@@ -16,7 +16,7 @@ namespace elements {
         /**
         * Constructor with parameters representing coordinates of Ghost.
         */
-        Ghost(size_t i, size_t j);
+        Ghost(size_t i, size_t j, ci::gl::Texture2dRef texture);
 
         /**
         * Draws the Ghost object

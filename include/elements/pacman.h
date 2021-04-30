@@ -22,7 +22,7 @@ namespace elements {
         /**
         * Constructor with parameters representing coordinates of Pacman.
         */
-        Pacman(size_t i, size_t j);
+        Pacman(size_t i, size_t j, ci::gl::Texture2dRef texture);
 
         /**
         * Draws Pacman object
