@@ -36,6 +36,15 @@ namespace elements {
             ci::gl::drawSolidCircle(center, radius);
         }
 
+        // Load images -https://libcinder.org/docs/guides/opengl/part4.html
+        void drawTexture(size_t row, size_t col, ci::gl::Texture2dRef texture) const {
+            ci::gl::color(ci::Color("white"));
+            glm::vec2 pixel_top_left = top_left_corner_ + vec2(row * pixel_side_length_, col * pixel_side_length_);
+            glm::vec2 pixel_bottom_right = pixel_top_left + vec2(pixel_side_length_, pixel_side_length_);
+            ci::Area area = ci::Area(pixel_top_left, pixel_bottom_right);
+            ci::gl::draw(texture, area);
+        }
+
         /**
         * Calculates midPoint for circle
         */
@@ -105,6 +114,7 @@ namespace elements {
     protected:
         Point position_;
         Direction direction_;
+        ci::gl::Texture2dRef texture_;
     };
 }
 }
