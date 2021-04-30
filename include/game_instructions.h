@@ -10,8 +10,12 @@ namespace finalproject {
     struct Configuration {
         constexpr static const size_t PIXEL_SIZE = 40;
         constexpr static const size_t GRID_SIZE = 23;
+        constexpr static const size_t WINDOWS_SIZE_X = 1500;
+        constexpr static const size_t WINDOWS_SIZE_Y = 1000;
         constexpr static const size_t WINDOW_MARGIN = PIXEL_SIZE;
         constexpr static const double SKETCHPAD_SIZE = GRID_SIZE  * PIXEL_SIZE + 2  * PIXEL_SIZE;
+
+        constexpr static const long SECONDS_TO_RELEASE_GHOSTS = 5;
         const std::string LEVEL_DATA_FILE = "C:\\Users\\marti\\CLionProjects\\cinder_master\\My-Projects\\final-project-martinapz\\data\\level1.txt";
     };
 
