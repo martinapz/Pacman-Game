@@ -5,7 +5,7 @@ using finalproject::PacmanApp;
 
 void prepareSettings(PacmanApp::Settings* settings) {
   settings->setTitle( "PacMan" );
-  settings->setWindowSize( 1500, 1000);
+  settings->setWindowSize( finalproject::Configuration::WINDOWS_SIZE_X, finalproject::Configuration::WINDOWS_SIZE_Y);
   settings->setFrameRate (5);
   settings->setResizable(false);
 }
