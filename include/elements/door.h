@@ -25,7 +25,7 @@ namespace elements {
 
     private:
         bool isOpen_ = false;
-        ci::Color color_ = ci::Color("lightskyblue");
+        ci::Color color_ = ci::Color("black");
     };
 
 } //namespace elements
