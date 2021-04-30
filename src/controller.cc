@@ -6,30 +6,43 @@
 #include <elements/door.h>
 #include <cmath>
 #include <chrono>
+#include <pacman_app.h>
 
 using namespace std;
 
 namespace finalproject {
 
     void Controller::setUpGame() {
+        //Load starting and ending images
+        starting_image_ = setUpLoadImages("pacman_starting_image.jpg");
+
+        //Loads images for pacman and ghosts
+        ci::gl::Texture2dRef g1Texture = setUpLoadImages("ghost1.png");
+        ci::gl::Texture2dRef g2Texture = setUpLoadImages("ghost2.png");
+        ci::gl::Texture2dRef pTexture = setUpLoadImages("pacmanR.png");
+
+        //Create pointers to static elements and static elements vector to set up the gameboard.
         shared_ptr<Wall> wall(new Wall());
         shared_ptr<Immunity> immunity(new Immunity());
         shared_ptr<Coin> coin(new Coin());
         vector<vector<std::shared_ptr<StaticElement>>> static_elements = vector<vector<std::shared_ptr<StaticElement>>>(
                 Configuration::GRID_SIZE, vector<std::shared_ptr<StaticElement>>(Configuration::GRID_SIZE));
+
         ifstream in(config_.LEVEL_DATA_FILE);
         if (!in.fail()) {
             unsigned i = 0;
+            size_t number_of_ghosts = 0;
             for (std::string line; getline(in, line);) {
                 for (unsigned j = 0; j < config_.GRID_SIZE; j++) {
                     switch (line.at(j)) {
                         case 'P':
                             static_elements[j][i] = empty_;
-                            game_.pacman_ = Pacman(j, i);
+                            game_.pacman_ = Pacman(j, i, pTexture);
                             break;
                         case 'G':
                             static_elements[j][i] = empty_;
-                            game_.ghosts_.push_back(Ghost(j, i));
+                            number_of_ghosts++;
+                            game_.ghosts_.push_back(Ghost(j, i, (number_of_ghosts % 2) ? g1Texture : g2Texture));
                             break;
                         case 'T':
                             static_elements[j][i] = door_;
@@ -39,6 +52,8 @@ namespace finalproject {
                             break;
                         case '-':
                             static_elements[j][i] = coin;
+                            //Initializing the number of coins on the board.
+                            game_.number_of_coins_++;
                             break;
                         case 'C':
                             static_elements[j][i] = immunity;
@@ -57,43 +72,66 @@ namespace finalproject {
     }
 
     void Controller::draw() {
-        cinder::gl::clear();
-        game_.sketchpad_.draw();
-        game_.pacman_.draw();
-        game_.features_.draw();
+        if (game_.game_status == Status::NOT_STARTED) {
+            //If game has not started yet, draw intro picture
+            glm::vec2 pixel_top_left = glm::vec2(0, 0);
+            glm::vec2 pixel_bottom_right = glm::vec2(Configuration::WINDOWS_SIZE_X, Configuration::WINDOWS_SIZE_Y);
+            ci::Area area = ci::Area(pixel_top_left, pixel_bottom_right);
+            ci::gl::draw(starting_image_, area);
+        } else if (game_.game_status == Status::ACTIVE || game_.game_status == Status::PAUSED) { //if game has started, draw components
+            cinder::gl::clear();
+            //Draws sketchpad and updated score
+            game_.sketchpad_.draw();
+            game_.features_.draw();
+            string string = "SCORE: " + to_string(game_.score_);
+            ci::gl::drawString(string , vec2(1050, 70), "white",ci::Font("", 30));
 
-        string string = "SCORE: " + to_string(game_.score_);
-        ci::gl::drawString(string , vec2(1050, 70), "white",ci::Font("", 30));
-
-
-        for (vector<Ghost>::iterator ghost = game_.ghosts_.begin(); ghost != game_.ghosts_.end(); ++ghost) {
-            ghost->draw();
+            //Draws components of the game, including the pacman and ghost.
+            game_.pacman_.draw();
+            for (vector<Ghost>::iterator ghost = game_.ghosts_.begin(); ghost != game_.ghosts_.end(); ++ghost) {
+                ghost->draw();
+            }
+        } else if (game_.game_status == Status::OVER) {
+            //DRAW END IMAGE
+            glm::vec2 pixel_top_left = glm::vec2(0, 0);
+            glm::vec2 pixel_bottom_right = glm::vec2(Configuration::WINDOWS_SIZE_X, Configuration::WINDOWS_SIZE_Y);
+            ci::Area area = ci::Area(pixel_top_left, pixel_bottom_right);
+            ci::gl::draw(starting_image_, area);
         }
     }
 
     void Controller::update() {
+        if (game_.game_status == ACTIVE) {
+            //Update the elapsed time
+            auto game_elapsed_time_ = std::chrono::duration_cast<std::chrono::seconds>(
+                    std::chrono::steady_clock::now() - start_time_).count();
 
-        chrono::steady_clock::time_point start = chrono::steady_clock::now();
-
-        // Update ghosts position to move to position closest to pacman
-        for (Ghost ghost : game_.ghosts_) {
-            calculateNewGhostPosition(ghost);
-        }
-
-        //Determine next pacman position
-        Point newPoint = determineNewPoint(game_.pacman_.getDirection());
-        //Check is new point is a wall
-        shared_ptr<StaticElement> element = game_.sketchpad_.GetStaticElements()[newPoint.getX()][newPoint.getY()];
-        if (game_.game_status == Status::ACTIVE) {
-            if (!dynamic_pointer_cast<Wall>(element)) { //If new point is not wall, change position
-                game_.pacman_.setPosition(newPoint.getX(), newPoint.getY());
-                if (dynamic_pointer_cast<Coin>(element)) {  //If new point is a coin, increment score and set element to empty
-                    game_.sketchpad_.GetStaticElements()[newPoint.getX()][newPoint.getY()] = empty_;
-                    game_.score_ += increment_score;
+            if (game_elapsed_time_ > 5) {
+                // Update ghosts position to move to position closest to pacman
+                for (Ghost ghost : game_.ghosts_) {
+                    calculateNewGhostPosition(ghost);
                 }
             }
-        }
 
+            //Determine next pacman position
+            Point newPoint = determineNewPoint(game_.pacman_.getDirection());
+            //Check is new point is a wall
+            shared_ptr<StaticElement> element = game_.sketchpad_.GetStaticElements()[newPoint.getX()][newPoint.getY()];
+            if (game_.game_status == Status::ACTIVE) {
+                if (!dynamic_pointer_cast<Wall>(element)) { //If new point is not wall, change position
+                    game_.pacman_.setPosition(newPoint.getX(), newPoint.getY());
+                    if (dynamic_pointer_cast<Coin>(
+                            element)) {  //If new point is a coin, increment score and set element to empty
+                        game_.sketchpad_.GetStaticElements()[newPoint.getX()][newPoint.getY()] = empty_;
+                        game_.score_ += increment_score;
+                        game_.number_of_coins_--;
+                    }
+                }
+            }
+            if (game_.number_of_coins_ == 0) {
+                game_.game_status = Status::OVER;
+            }
+        }
 
         /*
         // If pacman is on same position as ghost then game over
@@ -133,6 +171,7 @@ namespace finalproject {
         switch(action) {
             case Action::START :
                 game_.game_status = Status::ACTIVE;
+                start_time_ = chrono::steady_clock::now();
                 break;
             case Action::PAUSE :
                 game_.game_status = Status::PAUSED;
@@ -174,6 +213,13 @@ namespace finalproject {
         }
         Point newPoint(newX, newY);
         return newPoint;
+    }
+
+    ci::gl::Texture2dRef Controller::setUpLoadImages(const cinder::fs::path &relativePath ) {
+        // Load images - https://libcinder.org/docs/guides/opengl/part4.html
+        auto gImg1 = loadImage( ci::app::loadAsset( relativePath) );
+        ci::gl::Texture2dRef texture = ci::gl::Texture2d::create(gImg1);
+        return texture;
     }
 
     double Controller::distanceToPacman(Point a, Point b) {
