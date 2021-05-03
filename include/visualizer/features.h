@@ -14,12 +14,12 @@ namespace visualizer {
         /**
          * Draws the features of the Game
          */
-        void draw(size_t score, size_t level, Status game_status) const;
+        void draw(size_t score, size_t level, Status game_status, size_t lives) const;
 
     private:
         void drawContainer() const;
 
-        void drawLabels(size_t score, size_t level, Status game_status) const;
+        void drawLabels(size_t score, size_t level, Status game_status, size_t lives) const;
     };
 
 } // namespace visualizer

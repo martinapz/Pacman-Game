@@ -43,6 +43,9 @@ namespace finalproject {
             case ci::app::KeyEvent::KEY_PAUSE:
                 controller_.processAction(Action::PAUSE);
                 break;
+            case ci::app::KeyEvent::KEY_p:
+                controller_.processAction(Action::START_LEVEL);
+                break;
             default:
                 break;
         }

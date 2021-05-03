@@ -10,6 +10,7 @@ namespace finalproject {
 
     void Controller::setUpGame() {
         // Clear ghosts vector and close door
+        game_.number_of_coins_ = 0;
         game_.ghosts_.clear();
         center_ghost_container_->setIsOpen(false);
 
@@ -124,7 +125,7 @@ namespace finalproject {
             case LIFE_LOST :
                 //Draws sketchpad and updated score
                 game_.sketchpad_.draw();
-                game_.features_.draw(game_.score_, game_.level_, game_.game_status);
+                game_.features_.draw(game_.score_, game_.level_, game_.game_status, game_.lives_);
                 //Draws dynamic components of the game, including the pacman and ghost.
                 drawDynamicComponents();
                 break;
@@ -261,19 +262,26 @@ namespace finalproject {
     }
 
     void Controller::processAction(Action action) {
-        switch(action) {
-            case Action::START :
-                game_.game_status = Status::ACTIVE;
-                start_time_ = chrono::steady_clock::now();
-                break;
-            case Action::PAUSE :
-                game_.game_status = Status::PAUSED;
-                break;
-            case Action::EXIT :
-                game_.game_status = Status::OVER;
-                break;
-            default :
-                break;
+        if (game_.game_status != OVER) {
+            switch (action) {
+                case Action::START :
+                    game_.game_status = Status::ACTIVE;
+                    start_time_ = chrono::steady_clock::now();
+                    break;
+                case Action::PAUSE :
+                    game_.game_status = Status::PAUSED;
+                    break;
+                case Action::EXIT :
+                    game_.game_status = Status::OVER;
+                    break;
+                case Action::START_LEVEL :
+                    setUpGame();
+                    game_.game_status = Status::ACTIVE;
+                    start_time_ = chrono::steady_clock::now();
+                    break;
+                default :
+                    break;
+            }
         }
     }
 

@@ -29,7 +29,8 @@ namespace finalproject {
     enum Action {
         START,
         EXIT,
-        PAUSE
+        PAUSE,
+        START_LEVEL
     };
 
     /**

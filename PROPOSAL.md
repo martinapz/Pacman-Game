@@ -21,8 +21,8 @@ to see if that direction is valid before moving. If possible, I will start worki
 
 
 3. Week 3: 
-This week I will work on the ghost movements around the board. The ghosts will move to the tile
-that puts them closest to pacman. Additionally, I will implement the logic for the immunity tiles
+This week I will work on the ghost movements around the board. The ghosts will move randomly.
+Additionally, I will implement the logic for the immunity tiles
 which means that the pacman does not need to worry about the ghost trying to eat it. 
 
 
