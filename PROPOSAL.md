@@ -21,12 +21,31 @@ to see if that direction is valid before moving. If possible, I will start worki
 
 
 3. Week 3: 
-This week I will work on the ghost movements around the board. The ghosts will move randomly.
-Additionally, I will implement the logic for the immunity tiles
-which means that the pacman does not need to worry about the ghost trying to eat it. 
+This week I will work on the ghost movements around the board. The ghosts will move in the direction they are
+initially moving in, until they cannot, in which case they will move in a random direction. Additionally, I will 
+implement the logic for the immunity tiles which means that the pacman does not need to worry about the 
+ghost trying to eat it. 
 
 
 4. Stretch goals: 
 If possible, I would like to add a start screen for the user. I would also like to add multiple
-"levels" to the game, which would include new layout for the player. Additionally, I could add
-more details such as sounds to improve user experience. 
+"levels" to the game, which would include new layout for the player. Additionally I would like to add an end screen.
+I would also like to add lives that the pacman has throughout the game and keep track of those for the user to see.    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
