@@ -12,21 +12,24 @@ namespace elements {
     class Immunity : public StaticElement {
     public:
         /**
-        * Default constructor for Immunity object
-        */
+         * Default constructor for Immunity object.
+         */
         Immunity() = default;
 
         /**
-        * Draws the immunity object
-        */
+         * Draws the immunity object.
+         * @param row to draw immunity in
+         * @param col to draw immunity in
+         */
         void draw(size_t row, size_t col) const;
+
     private:
         ci::Color color_ = ci::Color("white");
         float radius_ = 5;
-
     };
 
 } //namespace elements
+
 } //namespace finalproject
 
 #endif //FINAL_PROJECT_IMMUNITY_H

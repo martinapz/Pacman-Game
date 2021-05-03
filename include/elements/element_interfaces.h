@@ -8,6 +8,7 @@
 using glm::vec2;
 
 namespace finalproject {
+
 namespace elements {
     /**
      * Class that represents the shapes that are drawn on the sketchpad.
@@ -15,7 +16,7 @@ namespace elements {
     class Shape {
     public:
         /**
-         * Draws square
+         * Draws square.
          * @param row to draw square
          * @param col to draw square
          * @param color to color in square
@@ -29,7 +30,7 @@ namespace elements {
         }
 
         /**
-         * Draws circle
+         * Draws circle.
          * @param row to draw circle
          * @param col to draw circle
          * @param color to color in circle
@@ -44,7 +45,7 @@ namespace elements {
         }
 
         /**
-         * Draws a texture
+         * Draws a texture.
          * @param row to draw texture
          * @param col to draw texture
          * @param texture that will be drawn
@@ -59,7 +60,7 @@ namespace elements {
         }
 
         /**
-         * Calculates midPoint for circle
+         * Calculates midPoint for circle.
          * @param p1 the first point
          * @param p2 the second point
          * @return the midpoint between the two points
@@ -80,7 +81,7 @@ namespace elements {
     class StaticElement : public Shape {
     public:
         /**
-         * Draws Static element
+         * Draws Static element.
          * @param row to draw element
          * @param col to draw element
          */
@@ -94,19 +95,19 @@ namespace elements {
     class DynamicElement : public Shape {
     public:
         /**
-         * Draws Dynamic Element
+         * Draws Dynamic Element.
          */
         virtual void draw() const = 0;
 
         /**
-         * Gets position of element
+         * Gets position of element.
          */
         Point getPosition() const {
             return position_;
         }
 
         /**
-         * Sets position of element
+         * Sets position of element.
          * @param x component
          * @param y component
          */
@@ -116,25 +117,28 @@ namespace elements {
         }
 
         /**
-        * Gets the direction of the element
-        */
+         * Gets the direction of the element.
+         */
         Direction getDirection() const {
             return direction_;
         }
 
         /**
-         * Sets the direction of the element
+         * Sets the direction of the element.
          * @param direction
          */
         void setDirection(Direction direction) {
             direction_ = direction;
         }
+
     protected:
         Point position_;
         Direction direction_;
         ci::gl::Texture2dRef texture_;
     };
+
 } // namespace elements
+
 } // namespace finalproject
 
 #endif //FINAL_PROJECT_ELEMENT_INTERFACES_H

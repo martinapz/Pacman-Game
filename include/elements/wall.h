@@ -12,13 +12,15 @@ namespace elements {
     class Wall : public StaticElement {
     public:
         /**
-        * Default constructor for Wall
-        */
+         * Default constructor for Wall.
+         */
         Wall() = default;
 
         /**
-        * Draws the Wall object
-        */
+         * Draws the Wall object.
+         * @param row to draw wall on
+         * @param col to draw wall on
+         */
         void draw(size_t row, size_t col) const;
 
     private:
@@ -26,6 +28,7 @@ namespace elements {
     };
 
 } //namespace elements
+
 } //namespace finalproject
 
 #endif //FINAL_PROJECT_WALL_H

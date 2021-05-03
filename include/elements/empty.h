@@ -4,8 +4,8 @@
 #include "element_interfaces.h"
 
 namespace finalproject {
-namespace elements {
 
+namespace elements {
     /**
     * Class that represents the Dot object in the Pacman game.
     */
@@ -20,12 +20,13 @@ namespace elements {
         * Draws the Empty element
         */
         void draw(size_t row, size_t col) const;
+
     private:
         ci::Color color_ = ci::Color("black");
-
     };
 
 } //namespace elements
+
 } //namespace finalproject
 
 #endif //FINAL_PROJECT_EMPTY_H

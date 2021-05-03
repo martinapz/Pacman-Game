@@ -9,7 +9,7 @@ using namespace std;
 namespace finalproject {
 
     void Controller::setUpGame() {
-        // Clear ghosts vector and close door
+        // Clear ghosts vector and number of coins, and close door
         game_.number_of_coins_ = 0;
         game_.ghosts_.clear();
         center_ghost_container_->setIsOpen(false);
@@ -90,7 +90,9 @@ namespace finalproject {
                 }
 
                 // If immunity is active check if it need to be deactivated
-                if (game_.immunity_) updateImmunityStatus();
+                if (game_.immunity_) {
+                    updateImmunityStatus();
+                }
 
                 // Move each ghost
                 if (center_ghost_container_ ->isOpen()) {
@@ -107,9 +109,6 @@ namespace finalproject {
         } else if (game_.game_status == LEVEL_WON) {
             // Loads and sets up game for new level
             setUpGame();
-            game_.game_status = NOT_STARTED;
-        } else if (game_.game_status == OVER) {
-
         }
     }
 
@@ -182,8 +181,8 @@ namespace finalproject {
     }
 
     void Controller::updateImmunityStatus() {
-        auto immunity_elapsed_time = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now() -
-                immunity_start_time_).count();
+        auto immunity_elapsed_time = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now()
+                - immunity_start_time_).count();
         if (immunity_elapsed_time > Configuration::SECONDS_TO_RELEASE_GHOSTS) {
             game_.immunity_ = false;
         }
@@ -205,6 +204,25 @@ namespace finalproject {
                 game_.sketchpad_.GetStaticElements()[pacmanNewPoint.getX()][pacmanNewPoint.getY()] = empty_;
                 game_.immunity_ = true;
                 immunity_start_time_ = chrono::steady_clock::now();
+            }
+        }
+    }
+
+    void Controller::moveOutsideGhost(Ghost *ghost) {
+        //Determine next ghost position
+        Point ghostNewPoint = determineNewPoint(ghost->getDirection(), ghost);
+        shared_ptr<StaticElement> element = game_.sketchpad_.GetStaticElements()[ghostNewPoint.getX()][ghostNewPoint.getY()];
+        if (!dynamic_pointer_cast<Wall>(element) && !(dynamic_pointer_cast<GhostContainer>(element))) {
+            ghost->setPosition(ghostNewPoint.getX(), ghostNewPoint.getY());
+        } else {
+            Direction randomDirection = Direction(std::rand() % 4);
+            Point newPoint = determineNewPoint(randomDirection, ghost);
+            shared_ptr<StaticElement> newElement = game_.sketchpad_.GetStaticElements()[newPoint.getX()][newPoint.getY()];
+            if (!dynamic_pointer_cast<Wall>(newElement) && !(dynamic_pointer_cast<GhostContainer>(newElement))) {
+                ghost->setDirection(randomDirection);
+                ghost->setPosition(newPoint.getX(),newPoint.getY());
+            } else {
+                moveOutsideGhost(ghost);
             }
         }
     }
@@ -239,18 +257,6 @@ namespace finalproject {
         }
     }
 
-    void Controller::moveOutsideGhost(Ghost *ghost) {
-        Direction randomDirection = Direction(std::rand() % 4);
-        Point newPoint = determineNewPoint(randomDirection, ghost);
-        shared_ptr<StaticElement> newElement = game_.sketchpad_.GetStaticElements()[newPoint.getX()][newPoint.getY()];
-        if (!dynamic_pointer_cast<Wall>(newElement) && !(dynamic_pointer_cast<GhostContainer>(newElement))) {
-            ghost->setDirection(randomDirection);
-            ghost->setPosition(newPoint.getX(),newPoint.getY());
-        } else {
-            moveOutsideGhost(ghost);
-        }
-    }
-
     void Controller::processMove(Direction direction) {
         // Get the destination based on the user's selected direction
         Point newPoint = determineNewPoint(direction, &game_.pacman_);
@@ -276,7 +282,7 @@ namespace finalproject {
                     break;
                 case Action::START_LEVEL :
                     setUpGame();
-                    game_.game_status = Status::ACTIVE;
+                    game_.game_status = Status::LEVEL_WON;
                     start_time_ = chrono::steady_clock::now();
                     break;
                 default :

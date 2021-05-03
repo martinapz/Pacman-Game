@@ -12,12 +12,12 @@ namespace elements {
     class Coin : public StaticElement {
     public:
         /**
-        * Default constructor for coin
+        * Default constructor for coin.
         */
         Coin() = default;
 
         /**
-        * Draws the Coin object on the sketchpad
+        * Draws the Coin object on the sketchpad.
          * @param row to draw coin
          * @param col to draw coin
         */
@@ -27,7 +27,9 @@ namespace elements {
         ci::Color color_ = ci::Color("yellow");
         float radius_ = 2;
     };
+
 } //namespace elements
+
 } //namespace finalproject
 
 #endif //FINAL_PROJECT_COIN_H

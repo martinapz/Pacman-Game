@@ -15,38 +15,37 @@ namespace visualizer {
     class Sketchpad {
     public:
         /**
-        * Default constructor for Sketchpad
-        */
+         * Default constructor for Sketchpad.
+         */
         Sketchpad() = default;
 
         /**
-        * Constructor
-        */
+         * Constructor.
+         */
         Sketchpad(const glm::vec2& top_left_corner, size_t num_pixels_per_side,
                     double sketchpad_size, double brush_radius = 1.15);
 
         /**
-        * Draws the Sketchpad
-        */
+         * Draws the Sketchpad.
+         */
         void draw() const;
 
         /**
-        * Sets the vector of static elements
-        */
+         * Sets the vector of static elements.
+         * @param static_elements will set the static elements vector
+         */
         void SetStaticElements(std::vector<std::vector<std::shared_ptr<StaticElement>>> static_elements);
 
         /**
-        * Gets the vector of static elements
-        */
+         * Gets the vector of static elements.
+         * @return vector of pointers of static elements
+         */
         std::vector<std::vector<std::shared_ptr<StaticElement>>>& GetStaticElements();
 
     private:
         glm::vec2 top_left_corner_;
-
         size_t num_pixels_per_side_;
-
         double pixel_side_length_;
-
         std::vector<std::vector<std::shared_ptr<StaticElement>>> static_elements_;
     };
 

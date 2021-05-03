@@ -40,48 +40,99 @@ namespace finalproject {
     class Controller {
     public:
         /**
-        * Default constructor
-        */
+         * Default constructor.
+         */
         Controller() = default;
 
         /**
-        * Sets up the game by initializing each pixel of the board
-        */
+         * Sets up the game by initializing each pixel of the board.
+         */
         void setUpGame();
 
         /**
-        * Updates the positions based on move at each time frame
-        */
+         * Updates the positions based on move at each time frame.
+         */
         void update();
 
         /**
-        * Draws the sketchpad, Pacman, and ghosts
-        */
+         * Draws the sketchpad, Pacman, and ghosts.
+         */
         void draw();
 
         /**
-        * Processes the direction that the user wants to move to and decides if it is a valid move
+         * Processes the direction that the user wants to move to and decides if it is a valid move.
          * @param direction where the element wants to move
-        */
+         */
         void processMove(Direction direction);
 
         /**
-        * Processes the action
+         * Processes the action.
          * @param action that is being processed
-        */
+         */
         void processAction(Action action);
 
     private:
+        /**
+         * Takes in an image and converts it into a texture.
+         * @param relativePath the image that will be converted
+         * @return texture of that image
+         */
         ci::gl::Texture2dRef Controller::setUpLoadImages(const cinder::fs::path &relativePath);
+
+        /**
+         * Determines the new point given the direction that the element wants to move.
+         * @param direction that element wants to move in
+         * @param element that will be moved
+         * @return point the element can move to
+         */
         Point determineNewPoint(Direction direction, DynamicElement* element);
+
+        /**
+         * Checks if pacman can move to possible new point, and if it can, updates the pacman position.
+         */
         void movePacman();
+
+        /**
+         * Checks if ghost can move to possible new point, and if it can, updates the ghost position.
+         * @param ghost that will possibly be moved
+         */
         void moveGhost(Ghost *ghost);
+
+        /**
+         * Handles logic for ghost movement when it is inside of the ghost container.
+         * @param ghost that will possibly be moved
+         */
         void moveInsideGhost(Ghost *ghost);
+
+        /**
+         * Handles logic for ghost movement when it is outside of the ghost container.
+         * @param ghost that will possibly be moved
+         */
         void moveOutsideGhost(Ghost *ghost);
+
+        /**
+         * Keeps track of how long pacman has immunity when it eats the immunity tiles.
+         */
         void updateImmunityStatus();
+
+        /**
+         * Handles logic for when pacman lands on the same tile as a ghost.
+         */
         bool lifeLost();
+
+        /**
+         * Draws the pacman and the ghosts.
+         */
         void drawDynamicComponents();
+
+        /**
+         * Draws the starting image of the game.
+         */
         void drawGameNotStarted();
+
+        /**
+         * Draws the ending image of the game.
+         */
         void drawGameOver();
 
         // Pointers to static elements

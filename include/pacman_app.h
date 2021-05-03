@@ -45,6 +45,7 @@ namespace finalproject {
     private:
         Controller controller_;
     };
+
 }  // namespace finalproject
 
 #endif  // PACMAN_APP_H

@@ -41,5 +41,6 @@ namespace finalproject {
         size_t x_;
         size_t y_;
     };
+
 } // namespace finalproject
 #endif //FINAL_PROJECT_POINT_H

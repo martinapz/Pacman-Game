@@ -55,6 +55,7 @@ namespace finalproject {
         LEVEL_WON,
         LIFE_LOST
     };
+
 } //namespace finalproject
 
 #endif //FINAL_PROJECT_GAME_INSTRUCTIONS_H
