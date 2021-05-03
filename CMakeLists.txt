@@ -60,8 +60,7 @@ list(APPEND SOURCE_FILES src/pacman_app.cc
         src/elements/coin.cc
         src/elements/wall.cc
         src/elements/empty.cc
-        src/elements/door.cc
-        src.elements/ghost_container.cc)
+        src/elements/ghost_container.cc)
 
 #list(APPEND TEST_FILES )
 

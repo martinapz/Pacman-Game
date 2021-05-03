@@ -2,7 +2,6 @@
 #define FINAL_PROJECT_POINT_H
 
 namespace finalproject {
-
     /**
      * A point class to represent the location of a moving object.
      */
@@ -42,6 +41,5 @@ namespace finalproject {
         size_t x_;
         size_t y_;
     };
-
 } // namespace finalproject
 #endif //FINAL_PROJECT_POINT_H

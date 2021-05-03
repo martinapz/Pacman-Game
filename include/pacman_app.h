@@ -12,7 +12,6 @@ using namespace std;
 using namespace finalproject::elements;
 
 namespace finalproject {
-
     /**
      * App for visualizing the Pacman game
      */

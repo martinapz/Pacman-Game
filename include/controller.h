@@ -9,14 +9,16 @@
 #include "elements/ghost.h"
 #include "elements/pacman.h"
 #include <elements/empty.h>
-#include <elements/door.h>
+#include <elements/wall.h>
+#include <elements/immunity.h>
+#include <elements/coin.h>
+#include <elements/ghost_container.h>
 
 using namespace std;
 
 namespace finalproject {
-
     /**
-     * Game struct
+     * Game struct holds the features that make up the Pacman game.
      */
     struct Game {
         visualizer::Sketchpad sketchpad_ = visualizer::Sketchpad(glm::vec2(Configuration::WINDOW_MARGIN,
@@ -27,6 +29,9 @@ namespace finalproject {
         visualizer::Features features_;
         Status game_status = Status::NOT_STARTED;
         int number_of_coins_ = 0;
+        size_t level_ = 1;
+        size_t lives_ = Configuration::NUMBER_OF_LIVES;
+        bool immunity_ = false;
     };
 
     /**
@@ -56,28 +61,52 @@ namespace finalproject {
 
         /**
         * Processes the direction that the user wants to move to and decides if it is a valid move
+         * @param direction where the element wants to move
         */
         void processMove(Direction direction);
 
         /**
         * Processes the action
+         * @param action that is being processed
         */
         void processAction(Action action);
 
     private:
         ci::gl::Texture2dRef Controller::setUpLoadImages(const cinder::fs::path &relativePath);
-        void calculateNewGhostPosition(Ghost ghost);
-        Point determineNewPoint(Direction direction);
-        double distanceToPacman(Point a, Point b);
+        Point determineNewPoint(Direction direction, DynamicElement* element);
+        void movePacman();
+        void moveGhost(Ghost *ghost);
+        void moveInsideGhost(Ghost *ghost);
+        void moveOutsideGhost(Ghost *ghost);
+        void updateImmunityStatus();
+        bool lifeLost();
+        void drawDynamicComponents();
+        void drawGameNotStarted();
+        void drawGameOver();
+
+        // Pointers to static elements
+        shared_ptr<Empty> empty_ = shared_ptr<Empty>(new Empty());
+        shared_ptr<Wall> wall_ = shared_ptr<Wall>(new Wall());
+        shared_ptr<Immunity> immunity_ = shared_ptr<Immunity>(new Immunity());
+        shared_ptr<Coin> coin_ = shared_ptr<Coin>(new Coin());
+        shared_ptr<GhostContainer> ghost_container_ = shared_ptr<GhostContainer>(new GhostContainer());
+        shared_ptr<GhostContainer> center_ghost_container_ = shared_ptr<GhostContainer>(new GhostContainer());
 
         Configuration config_;
         Game game_;
-        std::shared_ptr<Empty> empty_ = shared_ptr<Empty>(new Empty());
-        std::shared_ptr<Door> door_ = shared_ptr<Door>(new Door());
+
         chrono::steady_clock::time_point start_time_;
-        size_t increment_score = 10;
-        ci::gl::Texture2dRef starting_image_;
+        chrono::steady_clock::time_point immunity_start_time_;
+
+        //Images for pacman and ghosts
+        ci::gl::Texture2dRef starting_image_ = setUpLoadImages("pacman_starting_image.jpg");
+        ci::gl::Texture2dRef ending_image_ = setUpLoadImages("game_over.png");
+        ci::gl::Texture2dRef ghost1_texture_ = setUpLoadImages("ghost1.png");
+        ci::gl::Texture2dRef ghost2_texture_ = setUpLoadImages("ghost2.png");
+        ci::gl::Texture2dRef pacman_texture_ = setUpLoadImages("pacmanR.png");\
+        ci::gl::Texture2dRef immunity_ghost_texture_ = setUpLoadImages("immunity.png");
     };
 
-}
+} //namespace finalproject
+
 #endif //FINAL_PROJECT_CONTROLLER_H

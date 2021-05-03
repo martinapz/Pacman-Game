@@ -6,21 +6,21 @@
 namespace finalproject {
 
 namespace visualizer {
-       /**
-        * Class that draws the features of the game next to the sketchpad. This includes the score.
-        */
-        class Features {
-        public:
-           /**
-            * Draws the features of the Game
-            */
-            void draw() const;
+    /**
+     * Class that draws the features of the game next to the sketchpad. This includes the score.
+     */
+    class Features {
+    public:
+        /**
+         * Draws the features of the Game
+         */
+        void draw(size_t score, size_t level, Status game_status) const;
 
-        private:
-            void drawContainer() const;
+    private:
+        void drawContainer() const;
 
-            void drawLabels() const;
-        };
+        void drawLabels(size_t score, size_t level, Status game_status) const;
+    };
 
 } // namespace visualizer
 } // namespace finalproject

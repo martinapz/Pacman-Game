@@ -16,16 +16,20 @@ namespace elements {
         /**
         * Constructor with parameters representing coordinates of Ghost.
         */
-        Ghost(size_t i, size_t j, ci::gl::Texture2dRef texture);
+        Ghost(size_t i, size_t j, ci::gl::Texture2dRef texture, ci::gl::Texture2dRef immunity_ghost_texture);
 
         /**
         * Draws the Ghost object
         */
         void draw() const;
 
+        void drawInactive() const;
+
      private:
         float radius_ = 8;
         ci::Color color_ = ci::Color("red");
+        bool isActive_ = false;
+        ci::gl::Texture2dRef immunity_ghost_texture_;
     };
 
 } //namespace elements

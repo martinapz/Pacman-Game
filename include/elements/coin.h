@@ -18,14 +18,15 @@ namespace elements {
 
         /**
         * Draws the Coin object on the sketchpad
+         * @param row to draw coin
+         * @param col to draw coin
         */
         void draw(size_t row, size_t col) const;
+
     private:
         ci::Color color_ = ci::Color("yellow");
         float radius_ = 2;
-
     };
-
 } //namespace elements
 } //namespace finalproject
 

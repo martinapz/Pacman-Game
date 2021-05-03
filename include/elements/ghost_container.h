@@ -21,7 +21,7 @@ namespace elements {
 
         void setIsOpen(bool isOpen);
 
-        bool isOpen();
+        bool GhostContainer::isOpen();
 
     private:
         ci::Color color_ = ci::Color("black");
@@ -31,7 +31,5 @@ namespace elements {
 
 } //namespace elements
 } //namespace finalproject
-
-
 
 #endif //FINAL_PROJECT_GHOST_CONTAINER_H

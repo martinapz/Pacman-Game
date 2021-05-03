@@ -9,7 +9,6 @@ using namespace finalproject::elements;
 namespace finalproject {
 
 namespace visualizer {
-
     /**
      * This class represents the Sketchpad, which is where the pacman game is drawn and played on.
      */
