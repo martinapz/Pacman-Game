@@ -23,20 +23,22 @@
 
 # Demo 
 
-    The first demo shows the ghost movement and pacman movement. This example shows the score being updated, 
+    The first demo shows a full run through of the game. 
+    https://youtu.be/-sWwgRgHmlA
+
+    The next demo shows the ghost movement and pacman movement. This example shows the score being updated, 
     the level the user is on being displayed, as well as the lives the pacman has left (the life its on right 
     now minus one). This example shows the pacman being eaten by a ghost and then restarting that same level 
     once the key 'p' is pressed. 
-    The next demo shows the pacman passing by an immunity tile. The ghosts become a different color, and the 
-    pacman is able to pass by the ghost without losing a life.
     
     pacman eaten by ghost:
     https://user-images.githubusercontent.com/69597141/116950073-9a861280-ac49-11eb-9865-5a4b6cb4edd2.mp4
     
+    The next demo shows the pacman passing by an immunity tile. The ghosts become a different color, and the 
+    pacman is able to pass by the ghost without losing a life.
+    
     pacman passing immunity tile: 
     https://user-images.githubusercontent.com/69597141/116950278-1ed89580-ac4a-11eb-9f24-e4687c09ab98.mp4
-
- 
 
 
     
