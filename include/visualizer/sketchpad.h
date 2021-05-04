@@ -34,19 +34,19 @@ namespace visualizer {
          * Sets the vector of static elements.
          * @param static_elements will set the static elements vector
          */
-        void SetStaticElements(std::vector<std::vector<std::shared_ptr<StaticElement>>> static_elements);
+        void SetStaticElements(static_elements_vector static_elements);
 
         /**
          * Gets the vector of static elements.
          * @return vector of pointers of static elements
          */
-        std::vector<std::vector<std::shared_ptr<StaticElement>>>& GetStaticElements();
+        static_elements_vector& GetStaticElements();
 
     private:
         glm::vec2 top_left_corner_;
         size_t num_pixels_per_side_;
         double pixel_side_length_;
-        std::vector<std::vector<std::shared_ptr<StaticElement>>> static_elements_;
+        static_elements_vector static_elements_;
     };
 
 }  // namespace visualizer
