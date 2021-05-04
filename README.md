@@ -1,23 +1,28 @@
-Overview
+# Overview
+
     I created the Pacman game. I have created two levels for the user to play through, and if they complete both of 
     these levels then they win the game. The pacman has three lives throughout the whole game, so if it is eaten by
     the ghosts three times, then the loser loses. The user passes a level once the pacman eats all the coins on the 
     board. Additionally, there are immunity coins throughout the board. When the pacman passes through a tile with 
     an immunity, the pacman is immune to the ghosts for a certain period of time. 
 
-Requirements 
+# Requirements 
+
     This project requires Cinder to run the program. 
 
-Installation
+# Installation
+
     The steps for installation are as follows: 
         1. git clone https://github.com/uiuc-sp21-cs126/final-project-martinapz
         2. Open in CLion or a similar IDE
         3. Run the program 
 
-Code Style 
+# Code Style 
+
     For this project, I used the Google C++ Style Guide. 
 
-Demo 
+# Demo 
+
     The first demo shows the ghost movement and pacman movement. This example shows the score being updated, 
     the level the user is on being displayed, as well as the lives the pacman has left (the life its on right 
     now minus one). This example shows the pacman being eaten by a ghost and then restarting that same level 
