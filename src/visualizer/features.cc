@@ -25,7 +25,7 @@ namespace visualizer {
         ci::gl::drawString(value, vec2(1050, 170), "white", ci::Font("", 30));
 
         if (game_status == LEVEL_WON) {
-            value = "LEVEL COMPLETED. TO\nCONTINUE ONTO THE NEXT\nLEVEL, PRESS THE SPACE\nTO BEGIN. ";
+            value = "LEVEL COMPLETED. TO\nCONTINUE ONTO THE NEXT\nLEVEL, PRESS THE SPACE\nTO BEGIN";
             ci::gl::drawString(value, vec2(1050, 230), "white", ci::Font("", 30));
         }
 
@@ -40,7 +40,7 @@ namespace visualizer {
         }
 
         if (game_status == LIFE_LOST) {
-            value = "LIFE LOST, TO RESTART\nLEVEL, PRESS P. ";
+            value = "LIFE LOST, TO RESTART\nLEVEL, PRESS P";
             ci::gl::drawString(value, vec2(1050, 230), "white", ci::Font("", 30));
         }
     }
