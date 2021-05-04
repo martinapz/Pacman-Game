@@ -137,6 +137,8 @@ namespace elements {
         ci::gl::Texture2dRef texture_;
     };
 
+    typedef std::vector<std::vector<std::shared_ptr<StaticElement>>> static_elements_vector;
+
 } // namespace elements
 
 } // namespace finalproject

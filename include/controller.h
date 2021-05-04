@@ -14,8 +14,6 @@
 #include <elements/coin.h>
 #include <elements/ghost_container.h>
 
-using namespace std;
-
 namespace finalproject {
     /**
      * Game struct holds the features that make up the Pacman game.
@@ -23,7 +21,7 @@ namespace finalproject {
     struct Game {
         visualizer::Sketchpad sketchpad_ = visualizer::Sketchpad(glm::vec2(Configuration::WINDOW_MARGIN,
              Configuration::WINDOW_MARGIN), Configuration::GRID_SIZE, Configuration::SKETCHPAD_SIZE - 2 * Configuration::WINDOW_MARGIN,0);
-        vector<Ghost> ghosts_ = vector<Ghost>();
+        std::vector<Ghost> ghosts_ = std::vector<Ghost>();
         Pacman pacman_;
         size_t score_ = 0;
         visualizer::Features features_;
@@ -39,6 +37,7 @@ namespace finalproject {
      */
     class Controller {
     public:
+
         /**
          * Default constructor.
          */
@@ -135,26 +134,32 @@ namespace finalproject {
          */
         void drawGameOver();
 
+        /**
+         * Draws the winning image of the game.
+         */
+        void drawGameWon();
+
         // Pointers to static elements
-        shared_ptr<Empty> empty_ = shared_ptr<Empty>(new Empty());
-        shared_ptr<Wall> wall_ = shared_ptr<Wall>(new Wall());
-        shared_ptr<Immunity> immunity_ = shared_ptr<Immunity>(new Immunity());
-        shared_ptr<Coin> coin_ = shared_ptr<Coin>(new Coin());
-        shared_ptr<GhostContainer> ghost_container_ = shared_ptr<GhostContainer>(new GhostContainer());
-        shared_ptr<GhostContainer> center_ghost_container_ = shared_ptr<GhostContainer>(new GhostContainer());
+        std::shared_ptr<Empty> empty_ = std::shared_ptr<Empty>(new Empty());
+        std::shared_ptr<Wall> wall_ = std::shared_ptr<Wall>(new Wall());
+        std::shared_ptr<Immunity> immunity_ = std::shared_ptr<Immunity>(new Immunity());
+        std::shared_ptr<Coin> coin_ = std::shared_ptr<Coin>(new Coin());
+        std::shared_ptr<GhostContainer> ghost_container_ = std::shared_ptr<GhostContainer>(new GhostContainer());
+        std::shared_ptr<GhostContainer> center_ghost_container_ = std::shared_ptr<GhostContainer>(new GhostContainer());
 
         Configuration config_;
         Game game_;
 
-        chrono::steady_clock::time_point start_time_;
-        chrono::steady_clock::time_point immunity_start_time_;
+        std::chrono::steady_clock::time_point start_time_;
+        std::chrono::steady_clock::time_point immunity_start_time_;
 
         //Images for pacman and ghosts
         ci::gl::Texture2dRef starting_image_ = setUpLoadImages("pacman_starting_image.jpg");
+        ci::gl::Texture2dRef winning_image_ = setUpLoadImages("winning_image.png");
         ci::gl::Texture2dRef ending_image_ = setUpLoadImages("game_over.png");
         ci::gl::Texture2dRef ghost1_texture_ = setUpLoadImages("ghost1.png");
         ci::gl::Texture2dRef ghost2_texture_ = setUpLoadImages("ghost2.png");
-        ci::gl::Texture2dRef pacman_texture_ = setUpLoadImages("pacmanR.png");\
+        ci::gl::Texture2dRef pacman_texture_ = setUpLoadImages("pacmanR.png");
         ci::gl::Texture2dRef immunity_ghost_texture_ = setUpLoadImages("immunity.png");
     };
 

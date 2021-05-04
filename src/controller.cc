@@ -15,8 +15,8 @@ namespace finalproject {
         center_ghost_container_->setIsOpen(false);
 
         // Create vector of static elements and initialize it
-        vector<vector<std::shared_ptr<StaticElement>>> static_elements = vector<vector<std::shared_ptr<StaticElement>>>(
-                Configuration::GRID_SIZE, vector<std::shared_ptr<StaticElement>>(Configuration::GRID_SIZE));
+        static_elements_vector static_elements = static_elements_vector(Configuration::GRID_SIZE,
+                                              vector<std::shared_ptr<StaticElement>>(Configuration::GRID_SIZE));
 
         // Load level board file & process it to setup the game
         ifstream in(config_.LEVEL_DATA_FILE + std::to_string(game_.level_) + ".txt");
@@ -122,6 +122,7 @@ namespace finalproject {
             case PAUSED :
             case LEVEL_WON :
             case LIFE_LOST :
+            case IN_BETWEEN_LEVELS :
                 //Draws sketchpad and updated score
                 game_.sketchpad_.draw();
                 game_.features_.draw(game_.score_, game_.level_, game_.game_status, game_.lives_);
@@ -131,9 +132,17 @@ namespace finalproject {
             case OVER :
                 drawGameOver();
                 break;
+            case GAME_WINNER :
+                drawGameWon();
         }
     }
 
+    void Controller::drawGameWon() {
+        glm::vec2 pixel_top_left = glm::vec2(0, 0);
+        glm::vec2 pixel_bottom_right = glm::vec2(Configuration::WINDOWS_SIZE_X, Configuration::WINDOWS_SIZE_Y);
+        ci::Area area = ci::Area(pixel_top_left, pixel_bottom_right);
+        ci::gl::draw(winning_image_, area);
+    }
     void Controller::drawGameNotStarted() {
         //If game has not started yet, draw intro picture
         glm::vec2 pixel_top_left = glm::vec2(0, 0);
@@ -282,7 +291,7 @@ namespace finalproject {
                     break;
                 case Action::START_LEVEL :
                     setUpGame();
-                    game_.game_status = Status::LEVEL_WON;
+                    game_.game_status = Status::IN_BETWEEN_LEVELS;
                     start_time_ = chrono::steady_clock::now();
                     break;
                 default :
