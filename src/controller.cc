@@ -14,7 +14,7 @@ namespace finalproject {
 
         // Create vector of static elements and initialize it
         static_elements_vector static_elements = static_elements_vector(Configuration::GRID_SIZE,
-                                              std::vector<std::shared_ptr<StaticElement>>(Configuration::GRID_SIZE));
+                                            std::vector<std::shared_ptr<StaticElement>>(Configuration::GRID_SIZE));
 
         // Load level board file & process it to setup the game
         std::ifstream in(config_.LEVEL_DATA_FILE + std::to_string(game_.level_) + ".txt");
@@ -31,19 +31,21 @@ namespace finalproject {
                         case 'G':
                             static_elements[j][i] = ghost_container_;
                             number_of_ghosts++;
-                            game_.ghosts_.push_back(Ghost(j, i, ghost1_texture_, immunity_ghost_texture_));
+                            game_.ghosts_.push_back(Ghost(j, i, ghost1_texture_,
+                                                          immunity_ghost_texture_));
                             break;
                         case 'D':
                             static_elements[j][i] = center_ghost_container_;
                             number_of_ghosts++;
-                            game_.ghosts_.push_back(Ghost(j, i, ghost2_texture_, immunity_ghost_texture_));
+                            game_.ghosts_.push_back(Ghost(j, i, ghost2_texture_,
+                                                          immunity_ghost_texture_));
                             break;
                         case '#':
                             static_elements[j][i] = wall_;
                             break;
                         case '-':
                             static_elements[j][i] = coin_;
-                            //Initializing the number of coins on the board.
+                            // Initializing the number of coins on the board.
                             game_.number_of_coins_++;
                             break;
                         case 'C':
@@ -64,25 +66,25 @@ namespace finalproject {
 
     void Controller::update() {
         if (game_.game_status == ACTIVE) {
-            //Update the elapsed time
+            // Update the elapsed time
             auto game_elapsed_time_ = std::chrono::duration_cast<std::chrono::seconds>(
                     std::chrono::steady_clock::now() - start_time_).count();
 
             if (game_elapsed_time_ > 2) {
-                //Open the ghost container
+                // Open the ghost container
                 center_ghost_container_ ->setIsOpen(true);
             }
 
-            //Moves the pacman
+            // Moves the pacman
             movePacman();
 
-            //After moving pacman, check if there are any coins left in level
+            // After moving pacman, check if there are any coins left in level
             if (game_.number_of_coins_ == 0) {
                 game_.level_++;
-                game_.game_status = game_.level_ > Configuration::NUMBER_OF_LEVELS ? Status::GAME_WINNER : Status::LEVEL_WON;
+                game_.game_status = game_.level_ > Configuration::NUMBER_OF_LEVELS ?
+                                                   Status::GAME_WINNER : Status::LEVEL_WON;
             } else {
-                // Check life lost after pacman moves. Checks for special case when pacman and
-                //ghost switch positions.
+                // Check life lost after pacman moves. Checks for special case when pacman and ghost switch positions.
                 if (lifeLost()) {
                     return;
                 }
@@ -121,10 +123,10 @@ namespace finalproject {
             case LEVEL_WON :
             case LIFE_LOST :
             case IN_BETWEEN_LEVELS :
-                //Draws sketchpad and updated score
+                // Draws sketchpad and updated score
                 game_.sketchpad_.draw();
                 game_.features_.draw(game_.score_, game_.level_, game_.game_status, game_.lives_);
-                //Draws dynamic components of the game, including the pacman and ghost.
+                // Draws dynamic components of the game, including the pacman and ghost.
                 drawDynamicComponents();
                 break;
             case OVER :
@@ -138,7 +140,7 @@ namespace finalproject {
     void Controller::processMove(Direction direction) {
         // Get the destination based on the user's selected direction
         Point newPoint = determineNewPoint(direction, &game_.pacman_);
-        //Check if the pacman can enter the destination tile
+        // Check if the pacman can enter the destination tile
         std::shared_ptr<StaticElement> element = game_.sketchpad_.GetStaticElements()[newPoint.getX()][newPoint.getY()];
         if (!std::dynamic_pointer_cast<Wall>(element) && !(std::dynamic_pointer_cast<GhostContainer>(element))) {
             game_.pacman_.setDirection(direction);
@@ -149,8 +151,10 @@ namespace finalproject {
         if (game_.game_status != OVER) {
             switch (action) {
                 case Action::START :
-                    game_.game_status = Status::ACTIVE;
-                    start_time_ = std::chrono::steady_clock::now();
+                    if (game_.game_status != Status::LIFE_LOST) {
+                        game_.game_status = Status::ACTIVE;
+                        start_time_ = std::chrono::steady_clock::now();
+                    }
                     break;
                 case Action::PAUSE :
                     game_.game_status = Status::PAUSED;
@@ -159,14 +163,20 @@ namespace finalproject {
                     game_.game_status = Status::OVER;
                     break;
                 case Action::START_LEVEL :
-                    setUpGame();
-                    game_.game_status = Status::IN_BETWEEN_LEVELS;
-                    start_time_ = std::chrono::steady_clock::now();
+                    if (game_.game_status == Status::LIFE_LOST) {
+                        setUpGame();
+                        game_.game_status = Status::IN_BETWEEN_LEVELS;
+                        start_time_ = std::chrono::steady_clock::now();
+                    }
                     break;
                 default :
                     break;
             }
         }
+    }
+
+    Game Controller::getGame() const {
+        return game_;
     }
 
     Point Controller::determineNewPoint(Direction direction, DynamicElement* element) {
@@ -201,18 +211,19 @@ namespace finalproject {
     }
 
     void Controller::movePacman() {
-        //Determine next pacman position
+        // Determine next pacman position
         Point pacmanNewPoint = determineNewPoint(game_.pacman_.getDirection(), &game_.pacman_);
 
-        std::shared_ptr<StaticElement> element = game_.sketchpad_.GetStaticElements()[pacmanNewPoint.getX()][pacmanNewPoint.getY()];
-        //Check is new point is a wall
+        std::shared_ptr<StaticElement> element = game_.sketchpad_.GetStaticElements()
+                                                      [pacmanNewPoint.getX()][pacmanNewPoint.getY()];
+        // Check is new point is a wall
         if (!std::dynamic_pointer_cast<Wall>(element)) {
             game_.pacman_.setPosition(pacmanNewPoint.getX(), pacmanNewPoint.getY());
-            if (std::dynamic_pointer_cast<Coin>(element)) {  //If new point is a coin, increment score and set element to empty
+            if (std::dynamic_pointer_cast<Coin>(element)) { // If new point is a coin, increment score & element = empty
                 game_.sketchpad_.GetStaticElements()[pacmanNewPoint.getX()][pacmanNewPoint.getY()] = empty_;
                 game_.score_ += Configuration::COIN_VALUE;
                 game_.number_of_coins_--;
-            } else if (std::dynamic_pointer_cast<Immunity>(element)) {
+            } else if (std::dynamic_pointer_cast<Immunity>(element)) { // If new point is immunity, set immunity to true
                 game_.sketchpad_.GetStaticElements()[pacmanNewPoint.getX()][pacmanNewPoint.getY()] = empty_;
                 game_.immunity_ = true;
                 immunity_start_time_ = std::chrono::steady_clock::now();
@@ -222,12 +233,13 @@ namespace finalproject {
 
     void Controller::moveGhost(Ghost *ghost) {
         // Check if ghost is inside or outside a ghost container
-        std::shared_ptr<StaticElement> element = game_.sketchpad_.GetStaticElements()[ghost->getPosition().getX()][ghost->getPosition().getY()];
+        std::shared_ptr<StaticElement> element = game_.sketchpad_.GetStaticElements()
+                [ghost->getPosition().getX()][ghost->getPosition().getY()];
         if (std::dynamic_pointer_cast<GhostContainer>(element)) {
-            // Ghost is in a GhostContainer location so move it out or to the center
+            // Ghost is in a GhostContainer, so move it out or to the center
             moveInsideGhost(ghost);
         } else {
-            // Ghost is outside a GhostContainer location so move it randomly to a new position
+            // Ghost is outside of GhostContainer, so move it to new position
             moveOutsideGhost(ghost);
         }
     }
@@ -240,10 +252,12 @@ namespace finalproject {
                 ghost->setPosition(ghost->getPosition().getX(),ghost->getPosition().getY()-1);
                 break;
             case Configuration::GRID_CENTER_X - 1:
+                // Ghost is in the GhostContainer so move it to middle with the door
                 ghost->setDirection(Direction::RIGHT);
                 ghost->setPosition(ghost->getPosition().getX()+ 1,ghost->getPosition().getY());
                 break;
             case Configuration::GRID_CENTER_X + 1:
+                // Ghost is in the GhostContainer so move it to middle with the door
                 ghost->setDirection(Direction::LEFT);
                 ghost->setPosition(ghost->getPosition().getX()- 1,ghost->getPosition().getY());
                 break;
@@ -253,25 +267,29 @@ namespace finalproject {
     void Controller::moveOutsideGhost(Ghost *ghost) {
         //Determine next ghost position
         Point ghostNewPoint = determineNewPoint(ghost->getDirection(), ghost);
-        std::shared_ptr<StaticElement> element = game_.sketchpad_.GetStaticElements()[ghostNewPoint.getX()][ghostNewPoint.getY()];
+        std::shared_ptr<StaticElement> element = game_.sketchpad_.GetStaticElements()
+                [ghostNewPoint.getX()][ghostNewPoint.getY()];
         if (!std::dynamic_pointer_cast<Wall>(element) && !(std::dynamic_pointer_cast<GhostContainer>(element))) {
+            // If new point is not a wall/ghost container, set new position to next point in the direction it is moving.
             ghost->setPosition(ghostNewPoint.getX(), ghostNewPoint.getY());
-        } else {
+        } else { // If new point is a wall or ghost container, set new position to random point.
             Direction randomDirection = Direction(std::rand() % 4);
             Point newPoint = determineNewPoint(randomDirection, ghost);
-            std::shared_ptr<StaticElement> newElement = game_.sketchpad_.GetStaticElements()[newPoint.getX()][newPoint.getY()];
-            if (!std::dynamic_pointer_cast<Wall>(newElement) && !(std::dynamic_pointer_cast<GhostContainer>(newElement))) {
+            std::shared_ptr<StaticElement> newElement = game_.sketchpad_.GetStaticElements()
+                    [newPoint.getX()][newPoint.getY()];
+            if (!std::dynamic_pointer_cast<Wall>(newElement) &&
+                    !(std::dynamic_pointer_cast<GhostContainer>(newElement))) {
                 ghost->setDirection(randomDirection);
                 ghost->setPosition(newPoint.getX(),newPoint.getY());
-            } else {
+            } else { // If random direction point is still a wall or ghost container, call function again.
                 moveOutsideGhost(ghost);
             }
         }
     }
 
     void Controller::updateImmunityStatus() {
-        auto immunity_elapsed_time = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now()
-                                                                                      - immunity_start_time_).count();
+        auto immunity_elapsed_time = std::chrono::duration_cast<std::chrono::seconds>
+                (std::chrono::steady_clock::now() - immunity_start_time_).count();
         if (immunity_elapsed_time > Configuration::SECONDS_TO_RELEASE_GHOSTS) {
             game_.immunity_ = false;
         }
@@ -307,7 +325,7 @@ namespace finalproject {
     }
 
     void Controller::drawGameNotStarted() {
-        //If game has not started yet, draw intro picture
+        // If game has not started yet, draw intro picture
         glm::vec2 pixel_top_left = glm::vec2(0, 0);
         glm::vec2 pixel_bottom_right = glm::vec2(Configuration::WINDOWS_SIZE_X, Configuration::WINDOWS_SIZE_Y);
         ci::Area area = ci::Area(pixel_top_left, pixel_bottom_right);
@@ -315,7 +333,7 @@ namespace finalproject {
     }
 
     void Controller::drawGameOver() {
-        //DRAW LOST IMAGE
+        // If game is over, draw game over image
         glm::vec2 pixel_top_left = glm::vec2(0, 0);
         glm::vec2 pixel_bottom_right = glm::vec2(Configuration::WINDOWS_SIZE_X, Configuration::WINDOWS_SIZE_Y);
         ci::Area area = ci::Area(pixel_top_left, pixel_bottom_right);
@@ -323,6 +341,7 @@ namespace finalproject {
     }
 
     void Controller::drawGameWon() {
+        // If user wins game, draw winner image
         glm::vec2 pixel_top_left = glm::vec2(0, 0);
         glm::vec2 pixel_bottom_right = glm::vec2(Configuration::WINDOWS_SIZE_X, Configuration::WINDOWS_SIZE_Y);
         ci::Area area = ci::Area(pixel_top_left, pixel_bottom_right);
@@ -331,8 +350,12 @@ namespace finalproject {
 
     ci::gl::Texture2dRef Controller::setUpLoadImages(const cinder::fs::path &relativePath ) {
         // Load images - https://libcinder.org/docs/guides/opengl/part4.html
-        auto gImg1 = loadImage( ci::app::loadAsset( relativePath) );
-        ci::gl::Texture2dRef texture = ci::gl::Texture2d::create(gImg1);
-        return texture;
+        try {
+            auto gImg1 = loadImage( ci::app::loadAsset(relativePath) );
+            ci::gl::Texture2dRef texture = ci::gl::Texture2d::create(gImg1);
+            return texture;
+        } catch (cinder::app::AssetLoadExc) {
+            return nullptr;
+        }
     }
 }

@@ -62,7 +62,7 @@ list(APPEND SOURCE_FILES src/pacman_app.cc
         src/elements/empty.cc
         src/elements/ghost_container.cc)
 
-#list(APPEND TEST_FILES )
+list(APPEND TEST_FILES tests/test_controller.cc)
 
 ci_make_app(
         APP_NAME        pacman
