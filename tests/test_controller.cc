@@ -81,5 +81,3 @@ TEST_CASE("When pacman lands on coin tile, tile becomes empty"){
     controller.update();
     REQUIRE(controller.getGame().number_of_coins_ == 220);
 }
-
-

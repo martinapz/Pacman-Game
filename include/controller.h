@@ -69,6 +69,9 @@ namespace finalproject {
          */
         void processAction(Action action);
 
+        /**
+         * Loads images for elements.
+         */
         void loadImages();
 
         /**
@@ -167,7 +170,6 @@ namespace finalproject {
         ci::gl::Texture2dRef ghost2_texture_;
         ci::gl::Texture2dRef pacman_texture_;
         ci::gl::Texture2dRef immunity_ghost_texture_;
-
     };
 
 } //namespace finalproject
