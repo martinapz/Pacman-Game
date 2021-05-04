@@ -19,7 +19,7 @@ namespace finalproject {
         /**
         * Default constructor
         */
-        PacmanApp();
+        PacmanApp() = default;
 
         /**
         * Set up the Pacman game

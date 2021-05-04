@@ -6,9 +6,8 @@ using namespace finalproject::elements;
 
 namespace finalproject {
 
-    PacmanApp::PacmanApp() {}
-
     void PacmanApp::setup() {
+       controller_.loadImages();
        controller_.setUpGame();
      }
 
