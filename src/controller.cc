@@ -175,6 +175,16 @@ namespace finalproject {
         }
     }
 
+    void Controller::loadImages() {
+        starting_image_ = setUpLoadImages("pacman_starting_image.jpg");
+        winning_image_ = setUpLoadImages("winning_image.png");
+        ending_image_ = setUpLoadImages("game_over.png");
+        ghost1_texture_ = setUpLoadImages("ghost1.png");
+        ghost2_texture_ = setUpLoadImages("ghost2.png");
+        pacman_texture_ = setUpLoadImages("pacmanR.png");
+        immunity_ghost_texture_ = setUpLoadImages("immunity.png");
+    }
+
     Game Controller::getGame() const {
         return game_;
     }
@@ -350,12 +360,8 @@ namespace finalproject {
 
     ci::gl::Texture2dRef Controller::setUpLoadImages(const cinder::fs::path &relativePath ) {
         // Load images - https://libcinder.org/docs/guides/opengl/part4.html
-        try {
-            auto gImg1 = loadImage( ci::app::loadAsset(relativePath) );
-            ci::gl::Texture2dRef texture = ci::gl::Texture2d::create(gImg1);
-            return texture;
-        } catch (cinder::app::AssetLoadExc) {
-            return nullptr;
-        }
+        auto gImg1 = loadImage( ci::app::loadAsset(relativePath) );
+        ci::gl::Texture2dRef texture = ci::gl::Texture2d::create(gImg1);
+        return texture;
     }
 }

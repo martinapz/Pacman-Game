@@ -37,7 +37,6 @@ namespace finalproject {
      */
     class Controller {
     public:
-
         /**
          * Default constructor.
          */
@@ -69,6 +68,13 @@ namespace finalproject {
          * @param action that is being processed
          */
         void processAction(Action action);
+
+        void loadImages();
+
+        /**
+         * Getter for the game.
+         */
+        Game getGame() const;
 
     private:
         /**
@@ -153,14 +159,15 @@ namespace finalproject {
         std::chrono::steady_clock::time_point start_time_;
         std::chrono::steady_clock::time_point immunity_start_time_;
 
-        //Images for pacman and ghosts
-        ci::gl::Texture2dRef starting_image_ = setUpLoadImages("pacman_starting_image.jpg");
-        ci::gl::Texture2dRef winning_image_ = setUpLoadImages("winning_image.png");
-        ci::gl::Texture2dRef ending_image_ = setUpLoadImages("game_over.png");
-        ci::gl::Texture2dRef ghost1_texture_ = setUpLoadImages("ghost1.png");
-        ci::gl::Texture2dRef ghost2_texture_ = setUpLoadImages("ghost2.png");
-        ci::gl::Texture2dRef pacman_texture_ = setUpLoadImages("pacmanR.png");
-        ci::gl::Texture2dRef immunity_ghost_texture_ = setUpLoadImages("immunity.png");
+        // Images for pacman and ghosts
+        ci::gl::Texture2dRef starting_image_;
+        ci::gl::Texture2dRef winning_image_;
+        ci::gl::Texture2dRef ending_image_;
+        ci::gl::Texture2dRef ghost1_texture_;
+        ci::gl::Texture2dRef ghost2_texture_;
+        ci::gl::Texture2dRef pacman_texture_;
+        ci::gl::Texture2dRef immunity_ghost_texture_;
+
     };
 
 } //namespace finalproject
