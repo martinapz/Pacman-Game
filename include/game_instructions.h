@@ -48,6 +48,7 @@ namespace finalproject {
      */
     enum Status {
         NOT_STARTED,
+        IN_BETWEEN_LEVELS,
         ACTIVE,
         PAUSED,
         OVER,
