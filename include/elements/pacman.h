@@ -9,17 +9,17 @@ namespace finalproject {
 
 namespace elements {
     /**
-    * Class that represents the Pacman object in the Pacman game.
-    */
+     * Class that represents the Pacman object in the Pacman game.
+     */
     class Pacman : public DynamicElement {
     public:
         /**
-        * Default constructor.
-        */
+         * Default constructor.
+         */
         Pacman() = default;
 
         /**
-        * Constructor with parameters representing coordinates of Pacman.
+         * Constructor with parameters representing coordinates of Pacman.
          * @param i coordinate for pacman
          * @param j coordinate for pacman
          * @param texture of the pacman
@@ -27,8 +27,8 @@ namespace elements {
         Pacman(size_t i, size_t j, ci::gl::Texture2dRef texture);
 
         /**
-        * Draws Pacman object.
-        */
+         * Draws Pacman object.
+         */
         void draw() const;
 
     private:

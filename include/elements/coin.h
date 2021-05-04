@@ -7,20 +7,20 @@ namespace finalproject {
 
 namespace elements {
     /**
-    * Class that represents the Coin object in the Pacman game.
-    */
+     * Class that represents the Coin object in the Pacman game.
+     */
     class Coin : public StaticElement {
     public:
         /**
-        * Default constructor for coin.
-        */
+         * Default constructor for coin.
+         */
         Coin() = default;
 
         /**
-        * Draws the Coin object on the sketchpad.
+         * Draws the Coin object on the sketchpad.
          * @param row to draw coin
          * @param col to draw coin
-        */
+         */
         void draw(size_t row, size_t col) const;
 
     private:

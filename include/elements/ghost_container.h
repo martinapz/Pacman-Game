@@ -5,23 +5,23 @@ namespace finalproject {
 
 namespace elements {
     /**
-    * Class that represents the Dot object in the Pacman game.
-    */
+     * Class that represents the Dot object in the Pacman game.
+     */
     class GhostContainer : public StaticElement {
     public:
         /**
-        * Default constructor for Empty object.
-        */
+         * Default constructor for Empty object.
+         */
         GhostContainer() = default;
 
         /**
-        * Draws each ghost container.
-        */
+         * Draws each ghost container.
+         */
         void draw(size_t row, size_t col) const;
 
         /**
-        * Setter for whether container is open or not.
-        */
+         * Setter for whether container is open or not.
+         */
         void setIsOpen(bool isOpen);
 
         /**

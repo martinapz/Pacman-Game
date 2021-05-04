@@ -20,7 +20,8 @@ namespace finalproject {
         constexpr static const long NUMBER_OF_LIVES = 3;
 
         constexpr static const long SECONDS_TO_RELEASE_GHOSTS = 5;
-        const std::string LEVEL_DATA_FILE = "C:\\Users\\marti\\CLionProjects\\cinder_master\\My-Projects\\final-project-martinapz\\data\\level";
+        const std::string LEVEL_DATA_FILE =
+                "C:\\Users\\marti\\CLionProjects\\cinder_master\\My-Projects\\final-project-martinapz\\data\\level";
     };
 
     /**

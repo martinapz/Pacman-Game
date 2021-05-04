@@ -14,8 +14,6 @@ namespace visualizer {
     void Sketchpad::draw() const {
         for (size_t row = 0; row < num_pixels_per_side_; ++row) {
             for (size_t col = 0; col < num_pixels_per_side_; ++col) {
-                //Since this is a vector of pointers, you call the draw function on the element that the pointer
-                //is pointing to.
                 static_elements_[row][col] -> draw(row, col);
             }
         }
