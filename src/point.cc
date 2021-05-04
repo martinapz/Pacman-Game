@@ -22,4 +22,5 @@ namespace finalproject {
     void Point::setY(size_t y) {
         y_ = y;
     }
-}
+
+} //namespace finalproject

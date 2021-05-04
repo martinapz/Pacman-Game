@@ -1,5 +1,4 @@
 #include <controller.h>
-#include "elements/ghost_container.h"
 
 namespace finalproject {
 
@@ -25,4 +24,5 @@ namespace elements {
     }
 
 } //namespace elements
+
 } //namespace finalproject

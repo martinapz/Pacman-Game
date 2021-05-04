@@ -45,5 +45,6 @@ namespace visualizer {
         }
     }
 
-}
-}
+} //namespace visualizer
+
+} //namespace finalproject

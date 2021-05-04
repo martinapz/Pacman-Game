@@ -28,7 +28,6 @@ namespace elements {
     };
 
 } //namespace elements
-
 } //namespace finalproject
 
 #endif //FINAL_PROJECT_WALL_H

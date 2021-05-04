@@ -8,7 +8,6 @@
 #include "cinder/gl/gl.h"
 #include "controller.h"
 
-using namespace std;
 using namespace finalproject::elements;
 
 namespace finalproject {

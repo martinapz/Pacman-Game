@@ -72,13 +72,6 @@ namespace finalproject {
 
     private:
         /**
-         * Takes in an image and converts it into a texture.
-         * @param relativePath the image that will be converted
-         * @return texture of that image
-         */
-        ci::gl::Texture2dRef Controller::setUpLoadImages(const cinder::fs::path &relativePath);
-
-        /**
          * Determines the new point given the direction that the element wants to move.
          * @param direction that element wants to move in
          * @param element that will be moved
@@ -138,6 +131,13 @@ namespace finalproject {
          * Draws the winning image of the game.
          */
         void drawGameWon();
+
+        /**
+         * Takes in an image and converts it into a texture.
+         * @param relativePath the image that will be converted
+         * @return texture of that image
+         */
+        ci::gl::Texture2dRef Controller::setUpLoadImages(const cinder::fs::path &relativePath);
 
         // Pointers to static elements
         std::shared_ptr<Empty> empty_ = std::shared_ptr<Empty>(new Empty());
