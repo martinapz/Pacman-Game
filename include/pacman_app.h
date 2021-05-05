@@ -8,11 +8,9 @@
 #include "cinder/gl/gl.h"
 #include "controller.h"
 
-using namespace std;
 using namespace finalproject::elements;
 
 namespace finalproject {
-
     /**
      * App for visualizing the Pacman game
      */
@@ -21,7 +19,7 @@ namespace finalproject {
         /**
         * Default constructor
         */
-        PacmanApp();
+        PacmanApp() = default;
 
         /**
         * Set up the Pacman game
@@ -46,6 +44,7 @@ namespace finalproject {
     private:
         Controller controller_;
     };
+
 }  // namespace finalproject
 
 #endif  // PACMAN_APP_H

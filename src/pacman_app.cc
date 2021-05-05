@@ -6,9 +6,8 @@ using namespace finalproject::elements;
 
 namespace finalproject {
 
-    PacmanApp::PacmanApp() {}
-
     void PacmanApp::setup() {
+       controller_.loadImages();
        controller_.setUpGame();
      }
 
@@ -43,8 +42,12 @@ namespace finalproject {
             case ci::app::KeyEvent::KEY_PAUSE:
                 controller_.processAction(Action::PAUSE);
                 break;
+            case ci::app::KeyEvent::KEY_p:
+                controller_.processAction(Action::START_LEVEL);
+                break;
             default:
                 break;
         }
     }
+
 }  // namespace finalproject

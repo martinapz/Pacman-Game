@@ -1,47 +1,55 @@
 #include "controller.h"
 #include "game_instructions.h"
-#include <elements/wall.h>
-#include <elements/coin.h>
-#include <elements/immunity.h>
-#include <elements/door.h>
 #include <cmath>
 #include <chrono>
-
-using namespace std;
+#include <pacman_app.h>
 
 namespace finalproject {
 
     void Controller::setUpGame() {
-        shared_ptr<Wall> wall(new Wall());
-        shared_ptr<Immunity> immunity(new Immunity());
-        shared_ptr<Coin> coin(new Coin());
-        vector<vector<std::shared_ptr<StaticElement>>> static_elements = vector<vector<std::shared_ptr<StaticElement>>>(
-                Configuration::GRID_SIZE, vector<std::shared_ptr<StaticElement>>(Configuration::GRID_SIZE));
-        ifstream in(config_.LEVEL_DATA_FILE);
+        // Clear ghosts vector and number of coins, and close door
+        game_.number_of_coins_ = 0;
+        game_.ghosts_.clear();
+        center_ghost_container_->setIsOpen(false);
+
+        // Create vector of static elements and initialize it
+        static_elements_vector static_elements = static_elements_vector(Configuration::GRID_SIZE,
+                                            std::vector<std::shared_ptr<StaticElement>>(Configuration::GRID_SIZE));
+
+        // Load level board file & process it to setup the game
+        std::ifstream in(config_.LEVEL_DATA_FILE + std::to_string(game_.level_) + ".txt");
         if (!in.fail()) {
-            unsigned i = 0;
+            size_t i = 0;
+            size_t number_of_ghosts = 0;
             for (std::string line; getline(in, line);) {
                 for (unsigned j = 0; j < config_.GRID_SIZE; j++) {
                     switch (line.at(j)) {
                         case 'P':
                             static_elements[j][i] = empty_;
-                            game_.pacman_ = Pacman(j, i);
+                            game_.pacman_ = Pacman(j, i, pacman_texture_);
                             break;
                         case 'G':
-                            static_elements[j][i] = empty_;
-                            game_.ghosts_.push_back(Ghost(j, i));
+                            static_elements[j][i] = ghost_container_;
+                            number_of_ghosts++;
+                            game_.ghosts_.push_back(Ghost(j, i, ghost1_texture_,
+                                                          immunity_ghost_texture_));
                             break;
-                        case 'T':
-                            static_elements[j][i] = door_;
+                        case 'D':
+                            static_elements[j][i] = center_ghost_container_;
+                            number_of_ghosts++;
+                            game_.ghosts_.push_back(Ghost(j, i, ghost2_texture_,
+                                                          immunity_ghost_texture_));
                             break;
                         case '#':
-                            static_elements[j][i] = wall;
+                            static_elements[j][i] = wall_;
                             break;
                         case '-':
-                            static_elements[j][i] = coin;
+                            static_elements[j][i] = coin_;
+                            // Initializing the number of coins on the board.
+                            game_.number_of_coins_++;
                             break;
                         case 'C':
-                            static_elements[j][i] = immunity;
+                            static_elements[j][i] = immunity_;
                             break;
                         default:
                             static_elements[j][i] = empty_;
@@ -52,122 +60,158 @@ namespace finalproject {
             }
             game_.sketchpad_.SetStaticElements(static_elements);
         } else {
-            throw invalid_argument("Level board file not found");
+            throw std::invalid_argument("Level board file not found");
+        }
+    }
+
+    void Controller::update() {
+        if (game_.game_status == ACTIVE) {
+            // Update the elapsed time
+            auto game_elapsed_time_ = std::chrono::duration_cast<std::chrono::seconds>(
+                    std::chrono::steady_clock::now() - start_time_).count();
+
+            if (game_elapsed_time_ > 2) {
+                // Open the ghost container
+                center_ghost_container_ ->setIsOpen(true);
+            }
+
+            // Moves the pacman
+            movePacman();
+
+            // After moving pacman, check if there are any coins left in level
+            if (game_.number_of_coins_ == 0) {
+                game_.level_++;
+                game_.game_status = game_.level_ > Configuration::NUMBER_OF_LEVELS ?
+                                                   Status::GAME_WINNER : Status::LEVEL_WON;
+            } else {
+                // Check life lost after pacman moves. Checks for special case when pacman and ghost switch positions.
+                if (lifeLost()) {
+                    return;
+                }
+
+                // If immunity is active check if it need to be deactivated
+                if (game_.immunity_) {
+                    updateImmunityStatus();
+                }
+
+                // Move each ghost
+                if (center_ghost_container_ ->isOpen()) {
+                    for (Ghost &ghost : game_.ghosts_) {
+                        moveGhost(&ghost);
+                    }
+                }
+
+                // Check life lost after ghosts moved
+                if (lifeLost()) {
+                    return;
+                }
+            }
+        } else if (game_.game_status == LEVEL_WON) {
+            // Loads and sets up game for new level
+            setUpGame();
         }
     }
 
     void Controller::draw() {
         cinder::gl::clear();
-        game_.sketchpad_.draw();
-        game_.pacman_.draw();
-        game_.features_.draw();
-
-        string string = "SCORE: " + to_string(game_.score_);
-        ci::gl::drawString(string , vec2(1050, 70), "white",ci::Font("", 30));
-
-
-        for (vector<Ghost>::iterator ghost = game_.ghosts_.begin(); ghost != game_.ghosts_.end(); ++ghost) {
-            ghost->draw();
+        switch (game_.game_status) {
+            case NOT_STARTED :
+                drawGameNotStarted();
+                break;
+            case ACTIVE :
+            case PAUSED :
+            case LEVEL_WON :
+            case LIFE_LOST :
+            case IN_BETWEEN_LEVELS :
+                // Draws sketchpad and updated score
+                game_.sketchpad_.draw();
+                game_.features_.draw(game_.score_, game_.level_, game_.game_status, game_.lives_);
+                // Draws dynamic components of the game, including the pacman and ghost.
+                drawDynamicComponents();
+                break;
+            case OVER :
+                drawGameOver();
+                break;
+            case GAME_WINNER :
+                drawGameWon();
         }
-    }
-
-    void Controller::update() {
-
-        chrono::steady_clock::time_point start = chrono::steady_clock::now();
-
-        // Update ghosts position to move to position closest to pacman
-        for (Ghost ghost : game_.ghosts_) {
-            calculateNewGhostPosition(ghost);
-        }
-
-        //Determine next pacman position
-        Point newPoint = determineNewPoint(game_.pacman_.getDirection());
-        //Check is new point is a wall
-        shared_ptr<StaticElement> element = game_.sketchpad_.GetStaticElements()[newPoint.getX()][newPoint.getY()];
-        if (game_.game_status == Status::ACTIVE) {
-            if (!dynamic_pointer_cast<Wall>(element)) { //If new point is not wall, change position
-                game_.pacman_.setPosition(newPoint.getX(), newPoint.getY());
-                if (dynamic_pointer_cast<Coin>(element)) {  //If new point is a coin, increment score and set element to empty
-                    game_.sketchpad_.GetStaticElements()[newPoint.getX()][newPoint.getY()] = empty_;
-                    game_.score_ += increment_score;
-                }
-            }
-        }
-
-
-        /*
-        // If pacman is on same position as ghost then game over
-        for(Ghost ghost : game_.ghosts_) {
-            if (newPoint.getX() == ghost.getPosition().getX() && newPoint.getY() == ghost.getPosition().getY()) {
-                //Game is over
-            }
-        }
-         */
-
-        //Check if pacman is on an static elements
-        //shared_ptr<StaticElement> element = game_.sketchpad_.GetStaticElements()[newX][game_.pacman_.getPosition().getY()];
-        //If it is a wall, the position does not change.
-
-        /*
-        if (auto wall = dynamic_pointer_cast<Wall>(element)) {
-
-        } else if (auto dot = dynamic_pointer_cast<Dot>(element)) { // If pacman is on Dot increase score and set position to empty
-            game_.sketchpad_.GetStaticElements()[newX][game_.pacman_.getPosition().getY()] == empty_;
-        } else if (auto coin = dynamic_pointer_cast<Coin>(element)) { //If pacman is on Coin increase score and set position to empty
-            game_.sketchpad_.GetStaticElements()[newX][game_.pacman_.getPosition().getY()] == empty_;
-        }
-         */
     }
 
     void Controller::processMove(Direction direction) {
         // Get the destination based on the user's selected direction
-        Point newPoint = determineNewPoint(direction);
-        //Check if the pacman can enter the destination tile
-        shared_ptr<StaticElement> element = game_.sketchpad_.GetStaticElements()[newPoint.getX()][newPoint.getY()];
-        if (!dynamic_pointer_cast<Wall>(element)) {
-           game_.pacman_.setDirection(direction);
+        Point newPoint = determineNewPoint(direction, &game_.pacman_);
+        // Check if the pacman can enter the destination tile
+        std::shared_ptr<StaticElement> element = game_.sketchpad_.GetStaticElements()[newPoint.getX()][newPoint.getY()];
+        if (!std::dynamic_pointer_cast<Wall>(element) && !(std::dynamic_pointer_cast<GhostContainer>(element))) {
+            game_.pacman_.setDirection(direction);
         }
     }
 
     void Controller::processAction(Action action) {
-        switch(action) {
-            case Action::START :
-                game_.game_status = Status::ACTIVE;
-                break;
-            case Action::PAUSE :
-                game_.game_status = Status::PAUSED;
-                break;
-            case Action::EXIT :
-                game_.game_status = Status::OVER;
-                break;
-            default :
-                break;
+        if (game_.game_status != OVER) {
+            switch (action) {
+                case Action::START :
+                    if (game_.game_status != Status::LIFE_LOST) {
+                        game_.game_status = Status::ACTIVE;
+                        start_time_ = std::chrono::steady_clock::now();
+                    }
+                    break;
+                case Action::PAUSE :
+                    game_.game_status = Status::PAUSED;
+                    break;
+                case Action::EXIT :
+                    game_.game_status = Status::OVER;
+                    break;
+                case Action::START_LEVEL :
+                    if (game_.game_status == Status::LIFE_LOST) {
+                        setUpGame();
+                        game_.game_status = Status::IN_BETWEEN_LEVELS;
+                        start_time_ = std::chrono::steady_clock::now();
+                    }
+                    break;
+                default :
+                    break;
+            }
         }
     }
 
-    Point Controller::determineNewPoint(Direction direction) {
+    void Controller::loadImages() {
+        starting_image_ = setUpLoadImages("pacman_starting_image.jpg");
+        winning_image_ = setUpLoadImages("winning_image.png");
+        ending_image_ = setUpLoadImages("game_over.png");
+        ghost1_texture_ = setUpLoadImages("ghost1.png");
+        ghost2_texture_ = setUpLoadImages("ghost2.png");
+        pacman_texture_ = setUpLoadImages("pacmanR.png");
+        immunity_ghost_texture_ = setUpLoadImages("immunity.png");
+    }
+
+    Game Controller::getGame() const {
+        return game_;
+    }
+
+    Point Controller::determineNewPoint(Direction direction, DynamicElement* element) {
         size_t newX;
         size_t newY;
         switch (direction) {
             case Direction::RIGHT :
-                newX = game_.pacman_.getPosition().getX() + 1 <= Configuration::GRID_SIZE ?
-                       game_.pacman_.getPosition().getX() + 1 : game_.pacman_.getPosition().getX();
-                newY = game_.pacman_.getPosition().getY();
+                newX = element -> getPosition().getX() + 1 <= Configuration::GRID_SIZE ?
+                       element -> getPosition().getX() + 1 : element -> getPosition().getX();
+                newY = element -> getPosition().getY();
                 break;
             case Direction::LEFT :
-                newX = game_.pacman_.getPosition().getX() - 1 >= 0 ?
-                       game_.pacman_.getPosition().getX() - 1 : game_.pacman_.getPosition().getX();
-                newY = game_.pacman_.getPosition().getY();
+                newX = element -> getPosition().getX() - 1 >= 0 ?
+                       element -> getPosition().getX() - 1 : element -> getPosition().getX();
+                newY = element -> getPosition().getY();
                 break;
             case Direction::DOWN :
-                newY = game_.pacman_.getPosition().getY() + 1 <= Configuration::GRID_SIZE ?
-                       game_.pacman_.getPosition().getY() + 1 : game_.pacman_.getPosition().getY();
-                newX = game_.pacman_.getPosition().getX();
+                newY = element -> getPosition().getY() + 1 <= Configuration::GRID_SIZE ?
+                       element -> getPosition().getY() + 1 : element -> getPosition().getY();
+                newX = element -> getPosition().getX();
                 break;
             case Direction::UP :
-                newY = game_.pacman_.getPosition().getY() - 1 <= Configuration::GRID_SIZE ?
-                       game_.pacman_.getPosition().getY() - 1 : game_.pacman_.getPosition().getY();
-                newX = game_.pacman_.getPosition().getX();
+                newY = element -> getPosition().getY() - 1 <= Configuration::GRID_SIZE ?
+                       element -> getPosition().getY() - 1 : element -> getPosition().getY();
+                newX = element -> getPosition().getX();
                 break;
             default :
                 break;
@@ -176,36 +220,148 @@ namespace finalproject {
         return newPoint;
     }
 
-    double Controller::distanceToPacman(Point a, Point b) {
-        double x = (a.getX() - b.getX()) * (a.getX() - b.getX());
-        double y = (a.getY() - b.getY()) * (a.getY() - b.getY());
-        return abs(std::sqrt(x + y));
+    void Controller::movePacman() {
+        // Determine next pacman position
+        Point pacmanNewPoint = determineNewPoint(game_.pacman_.getDirection(), &game_.pacman_);
+
+        std::shared_ptr<StaticElement> element = game_.sketchpad_.GetStaticElements()
+                                                      [pacmanNewPoint.getX()][pacmanNewPoint.getY()];
+        // Check is new point is a wall
+        if (!std::dynamic_pointer_cast<Wall>(element)) {
+            game_.pacman_.setPosition(pacmanNewPoint.getX(), pacmanNewPoint.getY());
+            if (std::dynamic_pointer_cast<Coin>(element)) { // If new point is a coin, increment score & element = empty
+                game_.sketchpad_.GetStaticElements()[pacmanNewPoint.getX()][pacmanNewPoint.getY()] = empty_;
+                game_.score_ += Configuration::COIN_VALUE;
+                game_.number_of_coins_--;
+            } else if (std::dynamic_pointer_cast<Immunity>(element)) { // If new point is immunity, set immunity to true
+                game_.sketchpad_.GetStaticElements()[pacmanNewPoint.getX()][pacmanNewPoint.getY()] = empty_;
+                game_.immunity_ = true;
+                immunity_start_time_ = std::chrono::steady_clock::now();
+            }
+        }
     }
 
-    void Controller::calculateNewGhostPosition(Ghost ghost) {
-        //TODO add to see if where they want to move is a wall
-        Point new_position;
-        //Finds distance of ghost from pacman when moving up
-        Point move_up = Point(ghost.getPosition().getX(), ghost.getPosition().getY() + 1);
-        double distance = distanceToPacman(ghost.getPosition(), move_up);
-
-        Point move_right = Point(ghost.getPosition().getX() + 1, ghost.getPosition().getY());
-        if (distanceToPacman(move_right, game_.pacman_.getPosition()) < distance) {
-            distance = distanceToPacman(move_right, game_.pacman_.getPosition());
-            new_position = move_right;
+    void Controller::moveGhost(Ghost *ghost) {
+        // Check if ghost is inside or outside a ghost container
+        std::shared_ptr<StaticElement> element = game_.sketchpad_.GetStaticElements()
+                [ghost->getPosition().getX()][ghost->getPosition().getY()];
+        if (std::dynamic_pointer_cast<GhostContainer>(element)) {
+            // Ghost is in a GhostContainer, so move it out or to the center
+            moveInsideGhost(ghost);
+        } else {
+            // Ghost is outside of GhostContainer, so move it to new position
+            moveOutsideGhost(ghost);
         }
+    }
 
-        Point move_left = Point(ghost.getPosition().getX() - 1, ghost.getPosition().getY());
-        if (distanceToPacman(move_left, game_.pacman_.getPosition()) < distance) {
-            distance = distanceToPacman(move_left, game_.pacman_.getPosition());
-            new_position = move_left;
+    void Controller::moveInsideGhost(Ghost *ghost) {
+        switch (ghost->getPosition().getX()) {
+            case Configuration::GRID_CENTER_X:
+                // Ghost is in the GhostContainer with the door so it can go out
+                ghost->setDirection(Direction::UP);
+                ghost->setPosition(ghost->getPosition().getX(),ghost->getPosition().getY()-1);
+                break;
+            case Configuration::GRID_CENTER_X - 1:
+                // Ghost is in the GhostContainer so move it to middle with the door
+                ghost->setDirection(Direction::RIGHT);
+                ghost->setPosition(ghost->getPosition().getX()+ 1,ghost->getPosition().getY());
+                break;
+            case Configuration::GRID_CENTER_X + 1:
+                // Ghost is in the GhostContainer so move it to middle with the door
+                ghost->setDirection(Direction::LEFT);
+                ghost->setPosition(ghost->getPosition().getX()- 1,ghost->getPosition().getY());
+                break;
         }
+    }
 
-        Point move_down = Point(ghost.getPosition().getX(), ghost.getPosition().getY() - 1);
-        if (distanceToPacman(move_down, game_.pacman_.getPosition()) < distance) {
-            distance = distanceToPacman(move_down, game_.pacman_.getPosition());
-            new_position = move_down;
+    void Controller::moveOutsideGhost(Ghost *ghost) {
+        //Determine next ghost position
+        Point ghostNewPoint = determineNewPoint(ghost->getDirection(), ghost);
+        std::shared_ptr<StaticElement> element = game_.sketchpad_.GetStaticElements()
+                [ghostNewPoint.getX()][ghostNewPoint.getY()];
+        if (!std::dynamic_pointer_cast<Wall>(element) && !(std::dynamic_pointer_cast<GhostContainer>(element))) {
+            // If new point is not a wall/ghost container, set new position to next point in the direction it is moving.
+            ghost->setPosition(ghostNewPoint.getX(), ghostNewPoint.getY());
+        } else { // If new point is a wall or ghost container, set new position to random point.
+            Direction randomDirection = Direction(std::rand() % 4);
+            Point newPoint = determineNewPoint(randomDirection, ghost);
+            std::shared_ptr<StaticElement> newElement = game_.sketchpad_.GetStaticElements()
+                    [newPoint.getX()][newPoint.getY()];
+            if (!std::dynamic_pointer_cast<Wall>(newElement) &&
+                    !(std::dynamic_pointer_cast<GhostContainer>(newElement))) {
+                ghost->setDirection(randomDirection);
+                ghost->setPosition(newPoint.getX(),newPoint.getY());
+            } else { // If random direction point is still a wall or ghost container, call function again.
+                moveOutsideGhost(ghost);
+            }
         }
-        ghost.setPosition(new_position.getX(), new_position.getY());
+    }
+
+    void Controller::updateImmunityStatus() {
+        auto immunity_elapsed_time = std::chrono::duration_cast<std::chrono::seconds>
+                (std::chrono::steady_clock::now() - immunity_start_time_).count();
+        if (immunity_elapsed_time > Configuration::SECONDS_TO_RELEASE_GHOSTS) {
+            game_.immunity_ = false;
+        }
+    }
+
+    bool Controller::lifeLost() {
+        // If immunity is not active and pacman ends up on same position as ghost then life is lost
+        if (!game_.immunity_) {
+            for (Ghost &ghost : game_.ghosts_) {
+                if (game_.pacman_.getPosition().getX() == ghost.getPosition().getX() &&
+                    game_.pacman_.getPosition().getY() == ghost.getPosition().getY()) {
+                    game_.lives_--;
+                    game_.game_status = (game_.lives_ == 0) ? Status::OVER : Status::LIFE_LOST;
+                    // Game is over or a life was lost so nothing else needs to be updated
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    void Controller::drawDynamicComponents() {
+        // Draw pacman
+        game_.pacman_.draw();
+        // Draw ghosts based on the immunity status
+        for (std::vector<Ghost>::iterator ghost = game_.ghosts_.begin(); ghost != game_.ghosts_.end(); ++ghost) {
+            if (game_.immunity_) {
+                ghost->drawInactive();
+            } else {
+                ghost->draw();
+            }
+        }
+    }
+
+    void Controller::drawGameNotStarted() {
+        // If game has not started yet, draw intro picture
+        glm::vec2 pixel_top_left = glm::vec2(0, 0);
+        glm::vec2 pixel_bottom_right = glm::vec2(Configuration::WINDOWS_SIZE_X, Configuration::WINDOWS_SIZE_Y);
+        ci::Area area = ci::Area(pixel_top_left, pixel_bottom_right);
+        ci::gl::draw(starting_image_, area);
+    }
+
+    void Controller::drawGameOver() {
+        // If game is over, draw game over image
+        glm::vec2 pixel_top_left = glm::vec2(0, 0);
+        glm::vec2 pixel_bottom_right = glm::vec2(Configuration::WINDOWS_SIZE_X, Configuration::WINDOWS_SIZE_Y);
+        ci::Area area = ci::Area(pixel_top_left, pixel_bottom_right);
+        ci::gl::draw(ending_image_, area);
+    }
+
+    void Controller::drawGameWon() {
+        // If user wins game, draw winner image
+        glm::vec2 pixel_top_left = glm::vec2(0, 0);
+        glm::vec2 pixel_bottom_right = glm::vec2(Configuration::WINDOWS_SIZE_X, Configuration::WINDOWS_SIZE_Y);
+        ci::Area area = ci::Area(pixel_top_left, pixel_bottom_right);
+        ci::gl::draw(winning_image_, area);
+    }
+
+    ci::gl::Texture2dRef Controller::setUpLoadImages(const cinder::fs::path &relativePath ) {
+        // Load images - https://libcinder.org/docs/guides/opengl/part4.html
+        auto gImg1 = loadImage( ci::app::loadAsset(relativePath) );
+        ci::gl::Texture2dRef texture = ci::gl::Texture2d::create(gImg1);
+        return texture;
     }
 }

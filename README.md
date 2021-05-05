@@ -40,9 +40,3 @@
     
     pacman passing immunity tile: 
     https://user-images.githubusercontent.com/69597141/116950278-1ed89580-ac4a-11eb-9f24-e4687c09ab98.mp4
-
-
-    
-   
-    
-    
