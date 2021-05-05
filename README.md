@@ -7,7 +7,7 @@
     throughout the board. When the pacman passes through a tile with an immunity, the pacman is 
     immune to the ghosts for a certain period of time. 
 
-# Requirements
+# Requirements 
 
     This project requires Cinder to run the program. 
 
@@ -18,11 +18,11 @@
         2. Open in CLion or a similar IDE
         3. Run the program 
 
-# Code Style
+# Code Style 
 
     For this project, I used the Google C++ Style Guide. 
 
-# Demo
+# Demo 
 
     The first demo shows a full run through of the game. 
     https://youtu.be/-sWwgRgHmlA
