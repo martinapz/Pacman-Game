@@ -6,6 +6,15 @@
     throughout the board. When the pacman passes through a tile with an immunity, the pacman is 
     immune to the ghosts for a certain period of time.
 
+Start page:
+![pacman](https://github.com/martinapz/Pacman-Game/assets/69597141/a5b2fccb-d630-4a0a-b8d3-c0791050f730)
+
+
+Game page:
+![game](https://github.com/martinapz/Pacman-Game/assets/69597141/2e26db63-e494-4659-a33b-eb21a9152585)
+
+
+
 
 # Requirements 
 
