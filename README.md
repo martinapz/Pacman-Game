@@ -1,11 +1,20 @@
 # Overview
-
-    I created the Pacman game. I have created two levels for the user to play through, and if they
-    complete both of these levels then they win the game. The pacman has three lives throughout the 
+    The project was an implementation of the Pacman game. I have created two levels for the user to play through, and if they
+    complete both of these levels, then they win the game. The pacman has three lives throughout the 
     whole game, so if it is eaten be the ghosts three times, then the user loses. The user passes
     a level once the pacman eats all the coins on the board. Additionally, there are immunity coins 
     throughout the board. When the pacman passes through a tile with an immunity, the pacman is 
     immune to the ghosts for a certain period of time. 
+
+    Start page:
+    ![image](https://github.com/martinapz/Pacman-Game/assets/69597141/030b0c5c-5a2a-48db-a670-cc3b428e9bde)
+
+    
+
+    Game page: 
+    ![image](https://github.com/martinapz/Pacman-Game/assets/69597141/2b892c3b-4e0a-4354-9baf-7516f2824e88)
+
+
 
 # Requirements 
 
